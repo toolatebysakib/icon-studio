@@ -16,7 +16,7 @@ Use **Download PNG**, **Media Pool**, or **Timeline** underneath the canvas. The
 
 Drag the canvas directly to the Media Pool, timeline, Explorer, or Finder. Dragging generates a real PNG in the chosen output folder, then starts a native file drag. The drop target controls placement and copying.
 
-The **Archive** button lists generated files by project. You can reveal them on disk, reuse them in Resolve, edit a previous icon, or export a ZIP. Archives include existing generated PNG files only. They exclude raw library downloads, caches, and editable workspace data. Moving or removing a generated file outside the panel removes it from the archive list, and can also make the corresponding Resolve media offline.
+The **Archive** button lists generated files by project. You can reveal them on disk, reuse them in Resolve, edit a previous icon, or export a ZIP. Single, batch and iconset exports also save generated files in the chosen output folder. SVG exports retain a PNG companion for previewing and Resolve imports. Archives include existing generated PNGs and their SVG variants. They exclude raw library downloads, caches, and editable workspace data. Moving or removing a generated PNG outside the panel removes it from the archive list, and can also make the corresponding Resolve media offline.
 
 ## Project looks
 

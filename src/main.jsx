@@ -829,7 +829,9 @@ function App() {
       try {
         const ctx = await desktop.context();
         if (!live) return;
-        setProjectContext(previous => previous?.id === ctx.project?.id ? previous : ctx.project);
+        setProjectContext((previous) =>
+          previous?.id === ctx.project?.id ? previous : ctx.project,
+        );
         if (ctx.project?.id !== nativeProjectRef.current?.id) {
           nativeSwitching.current = true;
           if (nativeProjectRef.current)
@@ -1260,13 +1262,13 @@ function App() {
                           aria-label={`Download ${icon.name} SVG`}
                           onClick={async () => {
                             try {
-                              download(
+                              const saved = await download(
                                 new Blob([await getIcon(icon)], {
                                   type: "image/svg+xml",
                                 }),
                                 `${icon.name}.svg`,
                               );
-                              notify("SVG downloaded");
+                              if (saved) notify("SVG downloaded");
                             } catch (e) {
                               notify(e.message);
                             }
@@ -2117,21 +2119,25 @@ function App() {
               setLooks((list) => list.filter((v) => v.id !== id))
             }
             onImport={() => presetInput.current.click()}
-            onExport={() =>
-              download(
-                new Blob(
-                  [
-                    JSON.stringify(
-                      { format: "icon-studio-looks", version: 1, looks },
-                      null,
-                      2,
-                    ),
-                  ],
-                  { type: "application/json" },
-                ),
-                "Icon Studio.iconlooks",
-              )
-            }
+            onExport={async () => {
+              try {
+                await download(
+                  new Blob(
+                    [
+                      JSON.stringify(
+                        { format: "icon-studio-looks", version: 1, looks },
+                        null,
+                        2,
+                      ),
+                    ],
+                    { type: "application/json" },
+                  ),
+                  "Icon Studio.iconlooks",
+                );
+              } catch (error) {
+                notify(error.message);
+              }
+            }}
           />
         </Modal>
       )}
@@ -2142,7 +2148,10 @@ function App() {
             setTheme={setTheme}
             notify={notify}
             onLibraryReady={() => {
-              if(desktop)setProjectContext(previous=>previous ? {...previous} : previous);
+              if (desktop)
+                setProjectContext((previous) =>
+                  previous ? { ...previous } : previous,
+                );
               setQuery("");
               setPrefix("");
               searchIcons("", "", false).then(setResults);
@@ -2465,6 +2474,8 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
     setWorking(true);
     setBusy("export");
     try {
+      const projectId = desktop ? (await desktop.context()).project?.id : null;
+      if (desktop && !projectId) throw Error("Open a Resolve project first.");
       const files = {},
         sizes =
           format === "iconset"
@@ -2485,6 +2496,22 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
               ? `${item.name}/${item.name}-${resolution}.png`
               : `${item.name}.${ext}`;
           files[path] = new Uint8Array(await blob.arrayBuffer());
+          if (desktop) {
+            const png =
+              ext === "png"
+                ? blob
+                : await renderPng(item, { size: resolution, glyphOnly });
+            const preview = await desktop.prepareIcon({
+              name:
+                format === "iconset" ? `${item.name}-${resolution}` : item.name,
+              item,
+              projectId,
+              bytes: await png.arrayBuffer(),
+            });
+            const generated = await desktop.generate(preview.id);
+            if (ext === "svg")
+              await desktop.attachSvg(generated.id, await blob.text());
+          }
           setProgress(
             Math.round((++done / (targets.length * sizes.length)) * 100),
           );
@@ -2494,23 +2521,24 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
           files[`${item.name}/README.txt`] = strToU8(
             "PNG icon sizes: 16–1024 px. SVG is available as a separate export.\n",
           );
+      let saved;
       if (targets.length === 1 && format !== "iconset") {
         const key = Object.keys(files)[0];
-        download(
+        saved = await download(
           new Blob([files[key]], {
             type: format === "svg" ? "image/svg+xml" : "image/png",
           }),
           key,
         );
       } else
-        download(
+        saved = await download(
           new Blob([zipSync(files)], { type: "application/zip" }),
           format === "iconset"
             ? "icon-studio-iconsets.zip"
             : "icon-studio-collection.zip",
         );
       notify(
-        `Exported ${targets.length} icon${targets.length === 1 ? "" : "s"}`,
+        `${saved ? "Exported" : "Generated"} ${targets.length} icon${targets.length === 1 ? "" : "s"}`,
       );
       onClose();
     } catch (e) {
@@ -2605,4 +2633,3 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
   );
 }
 createRoot(document.getElementById("root")).render(<App />);
-

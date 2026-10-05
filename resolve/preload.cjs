@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld("iconStudioDesktop", {
   setProjectLook: (id, look) => invoke("setProjectLook", id, look),
   prepareIcon: (value) => invoke("prepareIcon", value),
   generate: (id) => invoke("generate", id),
+  attachSvg: (id, svg) => invoke("attachSvg", id, svg),
+  saveExport: (value) => invoke("saveExport", value),
   archiveAction: (kind, id) => invoke("archiveAction", kind, id),
   downloadGenerated: (id) => invoke("downloadGenerated", id),
   archiveList: (id) => invoke("archiveList", id),

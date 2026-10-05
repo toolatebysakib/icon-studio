@@ -206,7 +206,7 @@ export function SettingsPanel({ theme, setTheme, notify, onLibraryReady }) {
                 setPending("Downloading…");
                 try {
                   const result = await desktop.downloadLibrary();
-                setSettings(await desktop.settings());
+                  setSettings(await desktop.settings());
                   notify(`${result.count.toLocaleString()} icons installed`);
                   onLibraryReady();
                 } catch (e) {
@@ -299,8 +299,8 @@ export function ArchivePanel({ notify, onRestore }) {
           onClick={async () => {
             setPending(true);
             try {
-              await desktop.exportArchive(projectId);
-              notify("Archive saved");
+              if (await desktop.exportArchive(projectId))
+                notify("Archive saved");
             } catch (e) {
               notify(e.message);
             } finally {

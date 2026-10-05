@@ -294,11 +294,27 @@
 .archive-content {
   min-height: 300px;
 }
-.project-options .resolve-download-row {display:flex;align-items:center;gap:16px;padding:20px;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);}
-.project-options .resolve-download-row>span{flex:1;font-size:13px;}
-.project-options .resolve-download-row>svg:first-child{width:20px;color:var(--accent);}
+.project-options .resolve-download-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+.project-options .resolve-download-row > span {
+  flex: 1;
+  font-size: 13px;
+}
+.project-options .resolve-download-row > svg:first-child {
+  width: 20px;
+  color: var(--accent);
+}
 @media (max-width: 680px) {
-  .header-actions button[aria-label="Help and shortcuts"]{display:none;}
+  .header-actions button[aria-label="Help and shortcuts"] {
+    display: none;
+  }
   .looks-grid,
   .archive-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

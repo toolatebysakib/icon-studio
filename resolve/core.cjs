@@ -189,6 +189,7 @@ class StudioStore {
         v.projectId === temp.projectId &&
         v.hash === temp.hash &&
         v.name === temp.name &&
+        inside(output, v.path) &&
         fs.existsSync(v.path),
     );
     if (existing) return existing;
@@ -226,6 +227,27 @@ class StudioStore {
       throw Error("Generated file is missing from disk.");
     return file;
   }
+  attachSvg(id, svg, currentProject) {
+    const file = this.findFile(id);
+    if (file.projectId !== currentProject.id)
+      throw Error("Resolve project changed.");
+    if (
+      typeof svg !== "string" ||
+      Buffer.byteLength(svg) > 5 * 1024 * 1024 ||
+      !/<svg[\s>]/i.test(svg)
+    )
+      throw Error("Invalid SVG export.");
+    const base = file.path.replace(/\.png$/i, "");
+    let target = file.svgPath || base + ".svg",
+      n = 2;
+    while (fs.existsSync(target) && fs.readFileSync(target, "utf8") !== svg)
+      target = `${base}-${n++}.svg`;
+    if (!fs.existsSync(target)) atomicWrite(target, svg);
+    file.svgPath = target;
+    file.svgPaths = [...new Set([...(file.svgPaths || []), target])];
+    this.persist();
+    return file;
+  }
   archive(projectId = "") {
     const files = this.state.files.filter(
       (v) => (!projectId || v.projectId === projectId) && fs.existsSync(v.path),
@@ -252,6 +274,11 @@ class StudioStore {
       entries[`${project}/${path.basename(file.path)}`] = fs.readFileSync(
         file.path,
       );
+      for (const svgPath of file.svgPaths ||
+        (file.svgPath ? [file.svgPath] : []))
+        if (fs.existsSync(svgPath))
+          entries[`${project}/${path.basename(svgPath)}`] =
+            fs.readFileSync(svgPath);
     }
     return entries;
   }

@@ -67,6 +67,21 @@ test("archives contain generated files only and reject invalid PNGs or project r
     assert.equal(store.archive().files.length, 1);
     assert.equal(Object.keys(store.archiveEntries()).length, 1);
     assert.ok(inside(output, file.path));
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle r="8"/></svg>';
+    assert.throws(
+      () => store.attachSvg(file.id, svg, { id: "other" }),
+      /changed/,
+    );
+    store.attachSvg(file.id, svg, project);
+    assert.equal(Object.keys(store.archiveEntries()).length, 2);
+    store.attachSvg(file.id, svg, project);
+    assert.equal(Object.keys(store.archiveEntries()).length, 2);
+    store.attachSvg(file.id, svg.replace('r="8"', 'r="10"'), project);
+    assert.equal(Object.keys(store.archiveEntries()).length, 3);
+    assert.ok(inside(output, file.svgPath));
+    fs.unlinkSync(file.svgPath);
+    assert.equal(Object.keys(store.archiveEntries()).length, 2);
     fs.unlinkSync(file.path);
     assert.equal(store.archive().files.length, 0);
   } finally {

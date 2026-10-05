@@ -100,7 +100,9 @@ export async function getIcon(icon) {
   if (icon.rawSvg) return sanitizeSvg(icon.rawSvg);
   if (cache.has(icon.fullName)) return cache.get(icon.fullName);
   if (window.iconStudioDesktop) {
-    const offline = await window.iconStudioDesktop.readIcon(icon.fullName).catch(() => null);
+    const offline = await window.iconStudioDesktop
+      .readIcon(icon.fullName)
+      .catch(() => null);
     if (offline) return sanitizeSvg(offline);
   }
   const [prefix, name] = icon.fullName.split(":");
@@ -129,8 +131,10 @@ export async function searchIcons(
 ) {
   const q = query.trim().toLowerCase();
   if (window.iconStudioDesktop) {
-    const offline = await window.iconStudioDesktop.searchIcons(q,prefix).catch(() => []);
-    if(offline.length) return offline;
+    const offline = await window.iconStudioDesktop
+      .searchIcons(q, prefix)
+      .catch(() => []);
+    if (offline.length) return offline;
   }
   let local = library.filter(
     (i) =>
@@ -307,7 +311,12 @@ export async function renderPng(item, opts = {}) {
     ),
   );
 }
-export function download(blob, name) {
+export async function download(blob, name) {
+  if (window.iconStudioDesktop)
+    return window.iconStudioDesktop.saveExport({
+      name,
+      bytes: await blob.arrayBuffer(),
+    });
   const url = URL.createObjectURL(blob),
     a = document.createElement("a");
   a.href = url;
@@ -319,12 +328,13 @@ export function download(blob, name) {
     a.remove();
     URL.revokeObjectURL(url);
   }, 10000);
+  return true;
 }
 export async function removeBackground(item) {
   const src = item.svg ? dataSvg(item.svg) : item.image;
   const img = await loadImage(src);
-  if(item.style.bgRemoveMode === 'smart' && !item.svg) {
-    const { removeSmartBackground } = await import('./smart-background');
+  if (item.style.bgRemoveMode === "smart" && !item.svg) {
+    const { removeSmartBackground } = await import("./smart-background");
     return removeSmartBackground(img);
   }
   const ratio = Math.min(1, 1024 / Math.max(img.width, img.height));

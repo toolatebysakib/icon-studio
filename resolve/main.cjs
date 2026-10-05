@@ -12,7 +12,7 @@ const fs = require("node:fs"),
   path = require("node:path"),
   http = require("node:http"),
   crypto = require("node:crypto");
-const { StudioStore, inside, atomicWrite } = require("./core.cjs");
+const { StudioStore, inside, atomicWrite, safeName } = require("./core.cjs");
 const actions = require("./resolve-actions.cjs");
 let zip;
 try {
@@ -231,6 +231,32 @@ function handlers() {
     const ctx = await current();
     if (!ctx.project) throw Error("Open a Resolve project first.");
     return store.generate(id, ctx.project);
+  });
+  register("attachSvg", async (id, svg) => {
+    const ctx = await current();
+    if (!ctx.project) throw Error("Open a Resolve project first.");
+    return store.attachSvg(id, svg, ctx.project);
+  });
+  register("saveExport", async ({ name, bytes }) => {
+    const filename = safeName(name),
+      extension = path.extname(filename).slice(1).toLowerCase();
+    const data = Buffer.from(bytes);
+    if (
+      !["png", "svg", "zip", "iconlooks", "iconstudio", "json"].includes(
+        extension,
+      ) ||
+      data.length > 100 * 1024 * 1024
+    )
+      throw Error("Invalid export.");
+    const target = await dialog.showSaveDialog(window, {
+      defaultPath: path.join(
+        store.state.settings.outputFolder || app.getPath("documents"),
+        filename,
+      ),
+      filters: [{ name: "Icon Studio export", extensions: [extension] }],
+    });
+    if (!target.canceled) atomicWrite(target.filePath, data);
+    return !target.canceled;
   });
   register("archiveAction", (kind, id) => insert(kind, store.findFile(id)));
   register("downloadGenerated", async (id) => {

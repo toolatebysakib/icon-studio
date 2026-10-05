@@ -208,7 +208,11 @@ export function validateProject(value) {
       style.iconColorMode = "original";
     if (!["solid", "gradient", "transparent"].includes(style.bgType))
       style.bgType = "gradient";
-    if (!["smart", "auto", "white", "black", "custom"].includes(style.bgRemoveMode))
+    if (
+      !["smart", "auto", "white", "black", "custom"].includes(
+        style.bgRemoveMode,
+      )
+    )
       style.bgRemoveMode = "smart";
     const processedImage =
       typeof item.processedImage === "string" &&
