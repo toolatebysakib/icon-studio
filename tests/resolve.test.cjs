@@ -129,7 +129,7 @@ test("native import honors playhead, selected track, duration and project identi
   const result = importFile(
     resolve,
     "icon.png",
-    { track: 2, duration: 5, position: "playhead" },
+    { track: 2, duration: 5, position: "playhead", trackMode: "manual" },
     "timeline",
     "p",
   );

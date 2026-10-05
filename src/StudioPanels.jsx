@@ -239,6 +239,14 @@ export function SettingsPanel({
           <section className="settings-section">
             <h3>Timeline</h3>
             <label className="form-field">
+              <span>Placement</span>
+              <select aria-label="Timeline placement" value={settings?.trackMode || "auto"} onChange={(event) => update("trackMode", event.target.value)}>
+                <option value="auto">Automatic · above overlapping clips</option>
+                <option value="manual">Manual track and position</option>
+              </select>
+            </label>
+            {(settings?.trackMode || "auto") === "manual" && <>
+            <label className="form-field">
               <span>Target video track</span>
               <input
                 type="number"
@@ -260,6 +268,7 @@ export function SettingsPanel({
                 <option value="end">At timeline end</option>
               </select>
             </label>
+            </>}
           </section>
         </>
       )}
@@ -340,8 +349,8 @@ export function ArchivePanel({ notify, onRestore }) {
   const act = async (kind, file) => {
     setPending(true);
     try {
-      await desktop.archiveAction(kind, file.id);
-      notify(kind === "pool" ? "Added to Media Pool" : "Added to timeline");
+      const insertion = await desktop.archiveAction(kind, file.id);
+      notify(kind === "pool" ? "Added to Media Pool" : `Added to timeline${insertion?.trackIndex ? ` · V${insertion.trackIndex}` : ""}`);
     } catch (e) {
       notify(e.message);
     } finally {

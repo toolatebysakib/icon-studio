@@ -12,7 +12,7 @@ An alternate Workflow Integration installation is available by copying the `app`
 
 ## Create and use icons
 
-Use **Download PNG**, **Media Pool**, or **Timeline** underneath the canvas. The PNG is saved before Resolve imports it. Timeline settings control the video track and insertion at the playhead or timeline end. PNG duration follows Resolve's Standard Still Duration preference; trim the clip in Resolve. Timeline placement does not ripple existing edits; use an empty video track for overlays.
+Use **Download PNG**, **Media Pool**, or **Timeline** underneath the canvas. The PNG is saved before Resolve imports it. Timeline insertion automatically uses the lowest unlocked, enabled video track above every clip overlapping the icon's complete duration at the playhead. It creates a new track if needed and keeps the playhead in place so successive icons stack upward. Existing clips remain unchanged. Settings offers an optional manual track/position override. PNG duration follows Resolve's Standard Still Duration preference; trim the clip in Resolve.
 
 The panel opens in a compact window. The pin icon toggles Always on Top and remembers your choice. Tool labels appear as the window grows; hover an icon for its name. Use the Library and Inspector buttons above the canvas to open or close side panels. In narrow windows they become drawers.
 

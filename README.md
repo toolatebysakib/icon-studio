@@ -4,6 +4,8 @@
 
 An icon composer for the web and DaVinci Resolve Studio. Includes PNG/SVG export, drag-and-drop imports, batch styling and renaming, palettes, effects, local AI background removal, and portable visual presets.
 
+Timeline insertion automatically chooses the lowest available track above all clips overlapping the complete icon duration at the playhead. It creates a track when needed and keeps existing clips and the playhead unchanged. Manual track/position remains an optional override.
+
 The Resolve companion adds native file dragging, Media Pool and timeline insertion, generated PNGs stored in selected folders, an archive organized by project, and project-specific looks. New projects inherit the latest look; returning projects restore their own look and workspace by their stable Resolve project ID.
 
 Version 3.1 adds a compact Resolve window, an Always on Top toggle, responsive tool labels, batch Media Pool imports, and configurable Shift+Space quick search with five shortcut presets and custom recording with up to 25 results on both platforms.

@@ -1,5 +1,5 @@
 """Resolve-internal bridge. No external scripting preference changes are required."""
-import json, os, sys, socket, threading, queue, secrets, subprocess, time
+import json, os, sys, socket, threading, queue, secrets, subprocess, time, math
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -38,17 +38,66 @@ def request(resolve, method, args):
     if args['kind']!='timeline': raise ValueError('Invalid operation')
     timeline=project.GetCurrentTimeline()
     if timeline is None: raise ValueError('Open a timeline first. The icon is in the Media Pool.')
-    options=args['options'];track=max(1,min(99,int(options.get('track',2))))
+    options=args['options']
+    settings=timeline.GetSettings() if hasattr(timeline,'GetSettings') else {}
+    fps=float(settings.get('timelineFrameRate') or project.GetSetting('timelineFrameRate') or 24)
+    frame=timeline.GetEndFrame() if options.get('trackMode')=='manual' and options.get('position')=='end' else timecode_frames(timeline.GetCurrentTimecode(),fps)
+    duration=max(1,round(max(.1,min(3600,float(options.get('duration',5))))*fps))
+    if options.get('trackMode')!='manual': return automatic_insert(timeline,pool,clips[0],frame,duration)
+    track=max(1,min(99,int(options.get('track',2))))
     while timeline.GetTrackCount('video')<track:
         if not timeline.AddTrack('video'): raise ValueError('Resolve could not add the target track.')
     if timeline.GetIsTrackLocked('video',track): raise ValueError('The target video track is locked.')
-    settings=timeline.GetSettings() if hasattr(timeline,'GetSettings') else {}
-    fps=float(settings.get('timelineFrameRate') or project.GetSetting('timelineFrameRate') or 24)
-    frame=timeline.GetEndFrame() if options.get('position')=='end' else timecode_frames(timeline.GetCurrentTimecode(),fps)
-    duration=max(1,round(max(.1,min(3600,float(options.get('duration',5))))*fps))
     added=pool.AppendToTimeline([{'mediaPoolItem':clips[0],'startFrame':0,'endFrame':duration-1,'mediaType':1,'trackIndex':track,'recordFrame':frame}])
     if not added: raise ValueError('Resolve could not add the icon to the timeline.')
     return {'imported':1,'added':len(added),'recordFrame':frame}
+
+def snapshot_tracks(timeline):
+    tracks=[]
+    for index in range(1,timeline.GetTrackCount('video')+1):
+        ranges=[]
+        for item in timeline.GetItemListInTrack('video',index) or []:
+            start,end=float(item.GetStart()),float(item.GetEnd())
+            if not math.isfinite(start) or not math.isfinite(end) or end<start:
+                raise ValueError("Resolve could not read a video clip's timeline range.")
+            ranges.append({'start':start,'end':end})
+        tracks.append({'index':index,'ranges':ranges,'locked':bool(timeline.GetIsTrackLocked('video',index)),'enabled':timeline.GetIsTrackEnabled('video',index) is not False})
+    return tracks
+
+def choose_track(tracks,frame,duration):
+    end=frame+duration
+    highest=max((track['index'] for track in tracks if any(clip['start']<end and clip['end']>frame for clip in track['ranges'])),default=0)
+    return next((track['index'] for track in tracks if track['index']>highest and not track['locked'] and track['enabled']),len(tracks)+1)
+
+def append_icon(pool,clip,frame,duration,track):
+    return pool.AppendToTimeline([{'mediaPoolItem':clip,'startFrame':0,'endFrame':duration-1,'mediaType':1,'trackIndex':track,'recordFrame':frame}])
+
+def automatic_insert(timeline,pool,clip,frame,requested_duration):
+    original_timecode=timeline.GetCurrentTimecode()
+    tracks=snapshot_tracks(timeline);staging_track=len(tracks)+1
+    if not timeline.AddTrack('video'): raise ValueError('Resolve could not create a video track.')
+    # Measure the actual still length safely; Resolve can ignore PNG source ranges.
+    try:
+        staged=append_icon(pool,clip,frame,requested_duration,staging_track)
+        if not staged: raise ValueError('Resolve could not place the icon. It is in the Media Pool.')
+        duration=float(staged[0].GetDuration())
+        if not math.isfinite(duration) or duration<=0:
+            timeline.DeleteClips(staged,False)
+            raise ValueError("Resolve could not determine the icon's duration.")
+        track=choose_track(tracks,frame,duration)
+        def result(items,index): return {'imported':1,'added':len(items),'recordFrame':frame,'trackIndex':index,'duration':duration}
+        if track==staging_track: return result(staged,track)
+        placed=append_icon(pool,clip,frame,duration,track)
+        if not placed: return result(staged,staging_track)
+        if not timeline.DeleteClips(staged,False):
+            timeline.DeleteClips(placed,False)
+            return result(staged,staging_track)
+        return result(placed,track)
+    finally:
+        try:
+            if not (timeline.GetItemListInTrack('video',staging_track) or []): timeline.DeleteTrack('video',staging_track)
+        finally:
+            timeline.SetCurrentTimecode(original_timecode)
 
 def electron_path():
     if sys.platform=='win32':

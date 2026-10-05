@@ -1010,12 +1010,13 @@ function App() {
       }
       const saved = await desktop.generate(file.id);
       setNativeFile(file);
+      let insertion;
       if (kind === "pool" || kind === "timeline")
-        await desktop.archiveAction(kind, saved.id);
+        insertion = await desktop.archiveAction(kind, saved.id);
       if (kind === "download") await desktop.downloadGenerated(saved.id);
       notify(
         kind === "timeline"
-          ? "Added to timeline"
+          ? `Added to timeline${insertion?.trackIndex ? ` · V${insertion.trackIndex}` : ""}`
           : kind === "pool"
             ? "Added to Media Pool"
             : "PNG saved",

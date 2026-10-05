@@ -38,6 +38,7 @@ function blank() {
       outputFolder: "",
       duration: 5,
       track: 2,
+      trackMode: "auto",
       position: "playhead",
       libraryCount: 0,
       alwaysOnTop: false,
@@ -109,11 +110,12 @@ class StudioStore {
   }
   updateSettings(patch) {
     const s = this.state.settings;
-    for (const key of ["duration", "track", "position"])
+    for (const key of ["duration", "track", "position", "trackMode"])
       if (Object.hasOwn(patch, key)) s[key] = patch[key];
     s.duration = Math.max(0.1, Math.min(3600, Number(s.duration) || 5));
     s.track = Math.max(1, Math.min(99, Math.floor(Number(s.track) || 2)));
     if (!["playhead", "end"].includes(s.position)) s.position = "playhead";
+    if (!["auto", "manual"].includes(s.trackMode)) s.trackMode = "auto";
     this.persist();
     return { ...s };
   }
