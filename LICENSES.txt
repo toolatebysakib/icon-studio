@@ -1,0 +1,23 @@
+Icon Studio offline library
+
+Lucide: ISC
+Author: Lucide Contributors
+License: https://github.com/lucide-icons/lucide/blob/main/LICENSE
+Source: https://github.com/lucide-icons/lucide
+
+Tabler Icons: MIT
+Author: Paweł Kuna
+License: https://github.com/tabler/tabler-icons/blob/master/LICENSE
+Source: https://github.com/tabler/tabler-icons
+
+Material Symbols: Apache 2.0
+Author: Google
+License: https://github.com/google/material-design-icons/blob/master/LICENSE
+Source: https://github.com/google/material-design-icons
+
+Flat Color Icons: MIT
+Author: Icons8
+License: undefined
+Source: https://github.com/icons8/flat-Color-icons
+
+The small starter collection retains the existing website's icon artwork. Brand logos remain trademarks of their respective owners.
