@@ -598,7 +598,7 @@ function App() {
       addItems([
         newItem(
           { name: icon.name, svg, source: icon.prefix, animated: false },
-          active?.style || defaultLook(),
+          cleanStyle(active?.style || defaultLook()),
         ),
       ]);
       notify(`Added ${icon.title || icon.name}`);
@@ -622,7 +622,7 @@ function App() {
                 source: "Imported",
                 animated: false,
               },
-              active?.style || defaultLook(),
+              cleanStyle(active?.style || defaultLook()),
             ),
           );
         } else if (/^image\/(png|jpeg|webp|gif|avif)$/.test(file.type)) {
@@ -635,7 +635,7 @@ function App() {
           incoming.push(
             newItem(
               { name: file.name, image, source: "Imported" },
-              active?.style || defaultLook(),
+              cleanStyle(active?.style || defaultLook()),
             ),
           );
         } else errors.push(file.name);

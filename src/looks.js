@@ -1,4 +1,4 @@
-import { defaults, safeName } from "./model";
+import { defaults, safeName } from "./model.js";
 
 const cacheKey = "icon-studio-looks-v1";
 export function cleanStyle(value) {
