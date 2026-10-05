@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { buildSvg, dataSvg } from "./engine";
 import { newItem } from "./model";
-import { defaultShortcut, captureShortcut, shortcutLabel } from "./shortcuts";
+import { defaultShortcut, shortcutPresets, captureShortcut, shortcutLabel } from "./shortcuts";
 
 export const desktop = window.iconStudioDesktop;
 export const releaseUrl =
@@ -112,6 +112,24 @@ export function SettingsPanel({
   setShortcut,
 }) {
   const [recording, setRecording] = useState(false);
+  useEffect(() => {
+    if (!recording) return;
+    const capture = (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (event.key === "Escape") {
+        setRecording(false);
+        return;
+      }
+      const value = captureShortcut(event);
+      if (value) {
+        setShortcut(value);
+        setRecording(false);
+      }
+    };
+    window.addEventListener("keydown", capture, true);
+    return () => window.removeEventListener("keydown", capture, true);
+  }, [recording, setShortcut]);
   const [settings, setSettings] = useState(null),
     [pending, setPending] = useState("");
   useEffect(() => {
@@ -154,26 +172,29 @@ export function SettingsPanel({
       </section>
       <section className="settings-section">
         <h3>Quick search</h3>
+        <label className="folder-setting">
+          <span>Shortcut preset</span>
+          <select
+            aria-label="Quick search shortcut preset"
+            value={shortcutPresets.find((preset) => shortcutLabel(preset.shortcut) === shortcutLabel(shortcut))?.id || "custom"}
+            onChange={(event) => {
+              const preset = shortcutPresets.find((value) => value.id === event.target.value);
+              if (preset) {
+                setShortcut(preset.shortcut);
+                setRecording(false);
+              }
+            }}
+          >
+            {shortcutPresets.map((preset, index) => <option key={preset.id} value={preset.id}>{preset.label}{index === 0 ? " (default)" : ""}</option>)}
+            <option value="custom" disabled>Custom</option>
+          </select>
+        </label>
         <div className="settings-inline">
           <button
             className="secondary-button shortcut-capture"
             aria-label="Change quick search shortcut"
             aria-pressed={recording}
             onClick={() => setRecording((value) => !value)}
-            onKeyDown={(event) => {
-              if (!recording) return;
-              event.preventDefault();
-              event.stopPropagation();
-              if (event.key === "Escape") {
-                setRecording(false);
-                return;
-              }
-              const value = captureShortcut(event);
-              if (value) {
-                setShortcut(value);
-                setRecording(false);
-              }
-            }}
           >
             {recording ? "Press a shortcut…" : shortcutLabel(shortcut)}
           </button>

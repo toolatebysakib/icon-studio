@@ -18,7 +18,7 @@ The panel opens in a compact window. The pin icon toggles Always on Top and reme
 
 To import a batch, select multiple icons in the collection, then click **Media Pool** underneath the canvas. All selected icons are generated into the current project's output subfolder and imported together. The Timeline button inserts the active icon.
 
-Press **Shift+F** while Icon Studio is focused to open quick search. Type a name, use arrow keys to select, and press Enter to add an icon. Results are limited to 25 and use the downloaded local library. Change the shortcut under **Settings > Quick search**. The website has the same shortcut and popup.
+Press **Shift+Space** while Icon Studio is focused to open quick search. Type a name, use arrow keys to select, and press Enter to add an icon. Results are limited to 25 and use the downloaded local library. Change the shortcut under **Settings > Quick search**. The website has the same shortcut and popup.
 
 Drag the canvas directly to the Media Pool, timeline, Explorer, or Finder. Dragging generates a real PNG in the chosen output folder, then starts a native file drag. The drop target controls placement and copying.
 
@@ -39,3 +39,4 @@ Settings, editable workspace state, project looks, archive references and a boun
 The Utility launcher uses a token-protected loopback connection to its own Resolve script. It does not change Resolve's external scripting preferences. Workflow Integration mode uses Blackmagic's locally installed SDK; proprietary SDK binaries are not included in this download.
 
 Windows Resolve integration is tested during development. The macOS installer and launcher are reviewed for paths, quoting and architecture, but require a real Mac to validate native dragging and Resolve behavior.
+
