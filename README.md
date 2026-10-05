@@ -6,6 +6,8 @@ An icon composer for the web and DaVinci Resolve Studio. Includes PNG/SVG export
 
 The Resolve companion adds native file dragging, Media Pool and timeline insertion, generated PNGs stored in selected folders, an archive organized by project, and project-specific looks. New projects inherit the latest look; returning projects restore their own look and workspace by their stable Resolve project ID.
 
+Version 3.1 adds a compact Resolve window, an Always on Top toggle, responsive tool labels, batch Media Pool imports, and configurable Shift+F quick search with up to 25 results on both platforms.
+
 ## Resolve
 
 Download and extract the complete Resolve ZIP. Run the Windows or Mac installer, then open **Workspace > Scripts > Utility > Icon Studio**. Select raw-library and generated-output folders in **Settings**. [Detailed instructions](resolve/README.md).

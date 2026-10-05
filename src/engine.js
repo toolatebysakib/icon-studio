@@ -128,13 +128,17 @@ export async function searchIcons(
   prefix = "",
   animated = false,
   signal,
+  limit = 180,
 ) {
   const q = query.trim().toLowerCase();
   if (window.iconStudioDesktop) {
     const offline = await window.iconStudioDesktop
-      .searchIcons(q, prefix)
+      .searchIcons(q, prefix, limit)
       .catch(() => []);
-    if (offline.length) return offline;
+    const settings = await window.iconStudioDesktop
+      .settings()
+      .catch(() => ({}));
+    if (offline.length || settings.libraryCount > 0) return offline;
   }
   let local = library.filter(
     (i) =>
@@ -148,9 +152,12 @@ export async function searchIcons(
       prefix,
     )
   )
-    return local;
+    return local.slice(0, limit);
   try {
-    const params = new URLSearchParams({ query: q, limit: "96" });
+    const params = new URLSearchParams({
+      query: q,
+      limit: String(Math.min(96, limit)),
+    });
     if (prefix) params.set("prefix", prefix);
     else if (animated) params.set("prefix", "line-md");
     const r = await fetch(`https://api.iconify.design/search?${params}`, {
@@ -173,10 +180,10 @@ export async function searchIcons(
         continue;
       local.push({ fullName, prefix, name, title: name.replace(/[-_]/g, " ") });
     }
-    return local;
+    return local.slice(0, limit);
   } catch (e) {
     if (e.name === "AbortError") throw e;
-    return local;
+    return local.slice(0, limit);
   }
 }
 export function buildSvg(

@@ -39,6 +39,11 @@ import {
   Settings,
   Bookmark,
   Archive,
+  Pin,
+  Film,
+  ListVideo,
+  PanelRightClose,
+  PanelRightOpen,
 } from "lucide-react";
 import { zipSync, strToU8 } from "fflate";
 import {
@@ -68,6 +73,9 @@ import { readSaved, saveWorkspace } from "./storage";
 import "./style.css";
 import "./theme.css";
 import "./product.css";
+import "./compact.css";
+import QuickSearch from "./QuickSearch";
+import { readShortcut, matchesShortcut, shortcutLabel } from "./shortcuts";
 import { readLooks, writeLooks, cleanStyle, parseLooks } from "./looks";
 import {
   desktop,
@@ -106,7 +114,10 @@ function Modal({ title, subtitle, children, onClose, wide = false }) {
   const ref = useRef();
   useEffect(() => {
     const previous = document.activeElement;
-    ref.current?.querySelector("input,select,button")?.focus();
+    (
+      ref.current?.querySelector("input:not([type='hidden']),select") ||
+      ref.current?.querySelector("button")
+    )?.focus();
     const handle = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab") {
@@ -320,17 +331,49 @@ function App() {
     }),
     [stageBg, setStageBg] = useState("plain"),
     [dragging, setDragging] = useState(false),
-    [showLibrary, setShowLibrary] = useState(true);
+    [showLibrary, setShowLibrary] = useState(
+      !desktop || window.innerWidth > 1100,
+    ),
+    [showInspector, setShowInspector] = useState(window.innerWidth >= 720),
+    [alwaysOnTop, setAlwaysOnTop] = useState(false),
+    [shortcut, setShortcut] = useState(readShortcut);
+  useEffect(() => {
+    localStorage.setItem(
+      "icon-studio-search-shortcut",
+      JSON.stringify(shortcut),
+    );
+  }, [shortcut]);
+  useEffect(() => {
+    desktop
+      ?.settings()
+      .then((value) => setAlwaysOnTop(!!value.alwaysOnTop))
+      .catch(() => {});
+  }, []);
   const [busy, setBusy] = useState(null),
     fileInput = useRef(),
     projectInput = useRef(),
     searchInput = useRef(),
     toastTimer = useRef();
+  const [viewportSize, setViewportSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  useEffect(() => {
+    const resize = () =>
+      setViewportSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, []);
   const active = items.find((i) => i.id === activeId) || items[0],
     chosen = items.filter((i) => selected.includes(i.id));
   const targetIds = chosen.map((i) => i.id);
   const notify = (message) => {
-    setToast(message);
+    setToast(
+      String(message).replace(
+        /^Error invoking remote method '[^']+': (?:Error: )?/,
+        "",
+      ),
+    );
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(""), 4500);
   };
@@ -717,7 +760,10 @@ function App() {
       )
         return;
       const mod = e.ctrlKey || e.metaKey;
-      if (mod && e.key.toLowerCase() === "z") {
+      if (matchesShortcut(e, shortcut)) {
+        e.preventDefault();
+        setModal("search");
+      } else if (mod && e.key.toLowerCase() === "z") {
         e.preventDefault();
         e.shiftKey ? redo() : undo();
       } else if (mod && e.key.toLowerCase() === "y") {
@@ -933,6 +979,25 @@ function App() {
         throw new Error(
           "Resolve project changed. Try again after the panel updates.",
         );
+      if (kind === "pool" && chosen.length > 1) {
+        const generated = [];
+        for (const item of chosen) {
+          const png = await renderPng(item);
+          const prepared = await desktop.prepareIcon({
+            name: item.name,
+            item,
+            projectId: ctx.project.id,
+            bytes: await png.arrayBuffer(),
+          });
+          generated.push(await desktop.generate(prepared.id));
+        }
+        const result = await desktop.batchImport(
+          generated.map((file) => file.id),
+          ctx.project.id,
+        );
+        notify(`Added ${result.imported} icons to Media Pool`);
+        return;
+      }
       let file = nativeFile;
       if (!file) {
         const blob = await renderPng(active);
@@ -962,11 +1027,25 @@ function App() {
       setBusy(null);
     }
   };
-  const previewSize = Math.round(280 * zoom);
+  const previewSize = Math.round(
+    (desktop
+      ? Math.max(
+          80,
+          Math.min(
+            240,
+            viewportSize.width - (viewportSize.width < 720 ? 90 : 370),
+            viewportSize.height - 380,
+          ),
+        )
+      : 280) * zoom,
+  );
   return (
     <div
       className="app"
       data-theme={theme}
+      data-desktop={!!desktop}
+      data-inspector-open={showInspector}
+      data-library-open={showLibrary}
       onDragOver={(e) => {
         e.preventDefault();
         if (
@@ -1045,6 +1124,31 @@ function App() {
           )}
         </div>
         <div className="header-actions">
+          {desktop && (
+            <button
+              className={`icon-button pin-button ${alwaysOnTop ? "active" : ""}`}
+              aria-label="Always on top"
+              title="Always on top"
+              aria-pressed={alwaysOnTop}
+              onClick={async () => {
+                try {
+                  setAlwaysOnTop(await desktop.setAlwaysOnTop(!alwaysOnTop));
+                } catch (error) {
+                  notify(error.message);
+                }
+              }}
+            >
+              <Pin size={16} />
+            </button>
+          )}
+          <button
+            className="icon-button"
+            aria-label="Quick icon search"
+            title={`Quick icon search · ${shortcutLabel(shortcut)}`}
+            onClick={() => setModal("search")}
+          >
+            <Search size={17} />
+          </button>
           <button
             className="icon-button"
             aria-label={
@@ -1056,6 +1160,8 @@ function App() {
           </button>
           <button
             className="quiet-button project-button"
+            aria-label="Project"
+            title="Project"
             onClick={() => setModal("project")}
           >
             <FolderOpen size={16} />
@@ -1073,6 +1179,7 @@ function App() {
             className="quiet-button look-button"
             onClick={() => setModal("looks")}
             aria-label="Style presets"
+            title="Saved looks"
           >
             <Bookmark size={16} />
             <span>Looks</span>
@@ -1093,9 +1200,22 @@ function App() {
           >
             <Settings size={17} />
           </button>
+          {!desktop && (
+            <a
+              className="secondary-button resolve-download-button"
+              href={releaseUrl}
+              title="Download Resolve script"
+              aria-label="Download Resolve script"
+            >
+              <Film size={16} />
+              <span className="button-label">Resolve script</span>
+            </a>
+          )}
           <span className="divider" />
           <button
             className="primary-button"
+            aria-label="Export icons"
+            title="Export icons"
             disabled={!active || busy}
             onClick={() => setModal("export")}
           >
@@ -1106,6 +1226,14 @@ function App() {
         </div>
       </header>
       <div className={`workspace ${showLibrary ? "" : "library-hidden"}`}>
+        <button
+          className="panel-backdrop"
+          aria-label="Close side panels"
+          onClick={() => {
+            setShowLibrary(false);
+            if (window.innerWidth < 720) setShowInspector(false);
+          }}
+        />
         {showLibrary && (
           <aside className="library-panel">
             <div className="library-heading">
@@ -1357,6 +1485,18 @@ function App() {
             </div>
             <div className="history-controls">
               <button
+                className="icon-button inspector-toggle"
+                aria-label={showInspector ? "Hide inspector" : "Show inspector"}
+                title="Inspector"
+                onClick={() => setShowInspector((value) => !value)}
+              >
+                {showInspector ? (
+                  <PanelRightClose size={17} />
+                ) : (
+                  <PanelRightOpen size={17} />
+                )}
+              </button>
+              <button
                 className="icon-button"
                 disabled={!past.length}
                 aria-label="Undo"
@@ -1400,6 +1540,11 @@ function App() {
               <>
                 <div
                   className={`stage-art ${desktop && nativeFile ? "native-drag-ready" : ""}`}
+                  title={
+                    desktop
+                      ? "Drag PNG to Resolve, Explorer or Finder"
+                      : undefined
+                  }
                   draggable={!!desktop && !!nativeFile && !removing}
                   onDragStart={(e) => {
                     if (desktop && nativeFile) {
@@ -1420,6 +1565,8 @@ function App() {
                 <div className="stage-actions">
                   <button
                     className="quick-png"
+                    aria-label="Download PNG"
+                    title="Download PNG"
                     disabled={!!busy}
                     onClick={async () => {
                       setBusy("png");
@@ -1438,15 +1585,21 @@ function App() {
                     }}
                   >
                     <Download size={14} />
-                    Download PNG
-                  </button>
-                  <span />
-                  <button onClick={copySvg}>
-                    <Copy size={14} />
-                    Copy SVG
+                    <span className="button-label">Download PNG</span>
                   </button>
                   <span />
                   <button
+                    onClick={copySvg}
+                    aria-label="Copy SVG"
+                    title="Copy SVG"
+                  >
+                    <Copy size={14} />
+                    <span className="button-label">Copy SVG</span>
+                  </button>
+                  <span />
+                  <button
+                    aria-label="Copy PNG"
+                    title="Copy PNG"
                     onClick={async () => {
                       try {
                         const blob = await renderPng(active);
@@ -1463,34 +1616,47 @@ function App() {
                     }}
                   >
                     <ImageIcon size={14} />
-                    Copy PNG
+                    <span className="button-label">Copy PNG</span>
                   </button>
+                  {desktop && (
+                    <>
+                      <span />
+                      <div className="resolve-actions">
+                        <button
+                          className="native-insert"
+                          aria-label={
+                            chosen.length > 1
+                              ? "Add selected icons to Media Pool"
+                              : "Add icon to Media Pool"
+                          }
+                          title={
+                            chosen.length > 1
+                              ? `Add ${chosen.length} selected icons to Media Pool`
+                              : "Add icon to Media Pool"
+                          }
+                          disabled={!!busy || removing || !projectContext}
+                          onClick={() => generateNative("pool")}
+                        >
+                          <Film size={14} />
+                          <span className="button-label">
+                            Media Pool
+                            {chosen.length > 1 ? ` (${chosen.length})` : ""}
+                          </span>
+                        </button>
+                        <button
+                          className="native-insert"
+                          aria-label="Add icon to timeline"
+                          title="Add icon to timeline"
+                          disabled={!!busy || removing || !projectContext}
+                          onClick={() => generateNative("timeline")}
+                        >
+                          <ListVideo size={14} />
+                          <span className="button-label">Timeline</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
-                {desktop && (
-                  <>
-                    <div className="resolve-actions">
-                      <button
-                        className="secondary-button"
-                        disabled={!!busy || removing || !projectContext}
-                        onClick={() => generateNative("pool")}
-                      >
-                        <Plus size={14} /> Media Pool
-                      </button>
-                      <button
-                        className="secondary-button"
-                        disabled={!!busy || removing || !projectContext}
-                        onClick={() => generateNative("timeline")}
-                      >
-                        <Plus size={14} /> Timeline
-                      </button>
-                    </div>
-                    <span className="native-drag-label">
-                      {nativeFile
-                        ? "Drag the icon to Resolve, Explorer or Finder"
-                        : "Choose the generated icons folder in Settings"}
-                    </span>
-                  </>
-                )}
                 <div className="preview-presets">
                   <div>
                     {presets.slice(0, 4).map((p) => (
@@ -1585,21 +1751,27 @@ function App() {
               <div>
                 <button
                   className={`quiet-button ${batch ? "accent" : ""}`}
+                  aria-label={batch ? "Done selecting" : "Select icons"}
+                  title={batch ? "Done selecting" : "Select icons"}
                   onClick={() => {
                     setBatch(!batch);
                     if (batch) setSelected(active ? [active.id] : []);
                   }}
                 >
                   <CheckCheck size={15} />
-                  {batch ? "Done selecting" : "Select"}
+                  <span className="button-label">
+                    {batch ? "Done selecting" : "Select"}
+                  </span>
                 </button>
                 <button
                   className="quiet-button"
+                  aria-label="Rename selected icons"
+                  title="Rename selected icons"
                   disabled={!targetIds.length}
                   onClick={() => setModal("rename")}
                 >
                   <Type size={14} />
-                  Rename
+                  <span className="button-label">Rename</span>
                 </button>
                 <button
                   className="icon-button"
@@ -1652,7 +1824,7 @@ function App() {
                 aria-label="Import more icons"
               >
                 <Plus size={23} />
-                <span>Add icons</span>
+                <span className="button-label">Add icons</span>
               </button>
             </div>
           </section>
@@ -1665,6 +1837,13 @@ function App() {
                 ? `${targetIds.length} icons`
                 : "Live preview"}
             </span>
+            <button
+              className="icon-button inspector-close"
+              aria-label="Close inspector"
+              onClick={() => setShowInspector(false)}
+            >
+              <X size={16} />
+            </button>
           </div>
           <div className="inspector-tabs">
             <button
@@ -2144,6 +2323,8 @@ function App() {
       {modal === "settings" && (
         <Modal title="Settings" onClose={() => setModal(null)}>
           <SettingsPanel
+            shortcut={shortcut}
+            setShortcut={setShortcut}
             theme={theme}
             setTheme={setTheme}
             notify={notify}
@@ -2155,6 +2336,17 @@ function App() {
               setQuery("");
               setPrefix("");
               searchIcons("", "", false).then(setResults);
+            }}
+          />
+        </Modal>
+      )}
+      {modal === "search" && (
+        <Modal title="Find an icon" onClose={() => setModal(null)} wide>
+          <QuickSearch
+            shortcut={shortcut}
+            onChoose={async (icon) => {
+              await addIcon(icon);
+              setModal(null);
             }}
           />
         </Modal>
@@ -2258,6 +2450,7 @@ function App() {
         <Modal title="Keyboard shortcuts" onClose={() => setModal(null)}>
           <div className="help-content">
             {[
+              ["Quick icon search", shortcutLabel(shortcut)],
               ["Search library", "/ or Ctrl/⌘ K"],
               ["Select all", "Ctrl/⌘ A"],
               ["Undo / redo", "Ctrl/⌘ Z / Shift Z"],

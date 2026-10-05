@@ -1,1 +1,6 @@
-{"name":"icon-studio-resolve","version":"3.0.0","main":"main.cjs","description":"Icon Studio by Sakib for DaVinci Resolve Studio"}
+{
+  "name": "icon-studio-resolve",
+  "version": "3.1.0",
+  "main": "main.cjs",
+  "description": "Icon Studio by Sakib for DaVinci Resolve Studio"
+}

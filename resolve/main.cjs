@@ -199,6 +199,26 @@ function handlers() {
     ...store.state.settings,
     libraryCount: index().length,
   }));
+  register("setAlwaysOnTop", (value) => {
+    window.setAlwaysOnTop(value === true);
+    store.state.settings.alwaysOnTop = window.isAlwaysOnTop();
+    store.persist();
+    return store.state.settings.alwaysOnTop;
+  });
+  register("batchImport", async (ids, projectId) => {
+    if (!Array.isArray(ids) || !ids.length || ids.length > 200)
+      throw Error("Select up to 200 icons.");
+    const ctx = await current();
+    if (!ctx.project || ctx.project.id !== projectId)
+      throw Error("Resolve project changed.");
+    const records = [...new Set(ids)].map((id) => store.findFile(id));
+    if (records.some((file) => file.projectId !== projectId))
+      throw Error("Resolve project changed.");
+    const files = records.map((file) => file.path);
+    return bridgeUrl
+      ? bridgeCall("batch", { files, expectedProjectId: projectId })
+      : actions.importFiles(resolve, files, projectId);
+  });
   register("updateSettings", (patch) => store.updateSettings(patch));
   register("chooseFolder", async (key) => {
     if (!["rawFolder", "outputFolder"].includes(key))
@@ -272,20 +292,26 @@ function handlers() {
       fs.copyFileSync(file.path, target.filePath);
     return !target.canceled;
   });
-  register("archiveList", (id) => {
+  register("archiveList", (id, offset = 0) => {
     const result = store.archive(id);
     return {
       ...result,
+      total: result.files.length,
       files: result.files
         .slice()
         .reverse()
-        .slice(0, 500)
+        .slice(
+          Math.max(0, Number(offset) || 0),
+          Math.max(0, Number(offset) || 0) + 100,
+        )
         .map((file) => ({
           ...file,
-          thumbnail: nativeImage
-            .createFromPath(file.path)
-            .resize({ width: 128 })
-            .toDataURL(),
+          thumbnail: file.hasPng
+            ? nativeImage
+                .createFromPath(file.path)
+                .resize({ width: 128 })
+                .toDataURL()
+            : "",
         })),
     };
   });
@@ -304,7 +330,11 @@ function handlers() {
       );
     return !target.canceled;
   });
-  register("reveal", (id) => shell.showItemInFolder(store.findFile(id).path));
+  register("reveal", (id) => {
+    const file = store.archive().files.find((file) => file.id === id);
+    if (!file) throw Error("Generated file is missing from disk.");
+    shell.showItemInFolder(file.displayPath);
+  });
   ipcMain.on("icon-studio:dragPrepared", async (event, id) => {
     try {
       trusted(event);
@@ -325,7 +355,7 @@ function handlers() {
       dialog.showErrorBox("Icon Studio", error.message);
     }
   });
-  register("searchIcons", (query, prefix) => {
+  register("searchIcons", (query, prefix, limit) => {
     const q = String(query || "").toLowerCase();
     const root = path.join(
       store.state.settings.rawFolder,
@@ -337,7 +367,7 @@ function handlers() {
           (!prefix || prefix === icon.prefix) &&
           (!q || `${icon.name} ${icon.title}`.toLowerCase().includes(q)),
       )
-      .slice(0, q ? 180 : 96)
+      .slice(0, Math.max(1, Math.min(180, Number(limit) || (q ? 180 : 96))))
       .map((icon) => ({
         ...icon,
         rawSvg: fs.readFileSync(path.join(root, icon.file), "utf8"),
@@ -363,7 +393,8 @@ function handlers() {
     const response = await fetch(config.url, {
       signal: AbortSignal.timeout(120000),
     });
-    if (!response.ok) throw Error("Icon library download failed.");
+    if (!response.ok)
+      throw Error(`Icon library unavailable (${response.status}). Try again.`);
     const declared = Number(response.headers.get("content-length"));
     if (declared > 80 * 1024 * 1024) throw Error("Icon library is too large.");
     const bytes = Buffer.from(await response.arrayBuffer());
@@ -419,10 +450,11 @@ if (!app.requestSingleInstanceLock()) {
       return net.fetch(require("node:url").pathToFileURL(file).href);
     });
     window = new BrowserWindow({
-      width: 1320,
-      height: 880,
-      minWidth: 860,
-      minHeight: 640,
+      width: 780,
+      height: 660,
+      minWidth: 440,
+      minHeight: 480,
+      alwaysOnTop: !!store.state.settings.alwaysOnTop,
       title: "Icon Studio by Sakib",
       backgroundColor: "#1e1f25",
       autoHideMenuBar: true,

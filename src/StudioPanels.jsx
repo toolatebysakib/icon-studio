@@ -6,9 +6,12 @@ import {
   Trash2,
   Check,
   ExternalLink,
+  Film,
+  ListVideo,
 } from "lucide-react";
-import { buildSvg } from "./engine";
+import { buildSvg, dataSvg } from "./engine";
 import { newItem } from "./model";
+import { defaultShortcut, captureShortcut, shortcutLabel } from "./shortcuts";
 
 export const desktop = window.iconStudioDesktop;
 export const releaseUrl =
@@ -100,7 +103,15 @@ export function LooksPanel({
   );
 }
 
-export function SettingsPanel({ theme, setTheme, notify, onLibraryReady }) {
+export function SettingsPanel({
+  theme,
+  setTheme,
+  notify,
+  onLibraryReady,
+  shortcut,
+  setShortcut,
+}) {
+  const [recording, setRecording] = useState(false);
   const [settings, setSettings] = useState(null),
     [pending, setPending] = useState("");
   useEffect(() => {
@@ -139,6 +150,42 @@ export function SettingsPanel({ theme, setTheme, notify, onLibraryReady }) {
               {theme === value && <Check size={14} />}
             </button>
           ))}
+        </div>
+      </section>
+      <section className="settings-section">
+        <h3>Quick search</h3>
+        <div className="settings-inline">
+          <button
+            className="secondary-button shortcut-capture"
+            aria-label="Change quick search shortcut"
+            aria-pressed={recording}
+            onClick={() => setRecording((value) => !value)}
+            onKeyDown={(event) => {
+              if (!recording) return;
+              event.preventDefault();
+              event.stopPropagation();
+              if (event.key === "Escape") {
+                setRecording(false);
+                return;
+              }
+              const value = captureShortcut(event);
+              if (value) {
+                setShortcut(value);
+                setRecording(false);
+              }
+            }}
+          >
+            {recording ? "Press a shortcut…" : shortcutLabel(shortcut)}
+          </button>
+          <button
+            className="text-button"
+            onClick={() => {
+              setShortcut(defaultShortcut);
+              setRecording(false);
+            }}
+          >
+            Reset
+          </button>
         </div>
       </section>
       {desktop && (
@@ -259,13 +306,15 @@ export function ArchivePanel({ notify, onRestore }) {
   const [data, setData] = useState({ projects: [], files: [] }),
     [projectId, setProjectId] = useState(""),
     [pending, setPending] = useState(false);
-  const refresh = () =>
+  useEffect(() => {
+    let live = true;
     desktop
       .archiveList(projectId)
-      .then(setData)
-      .catch((e) => notify(e.message));
-  useEffect(() => {
-    refresh();
+      .then((value) => live && setData(value))
+      .catch((error) => live && notify(error.message));
+    return () => {
+      live = false;
+    };
   }, [projectId]);
   const act = async (kind, file) => {
     setPending(true);
@@ -283,6 +332,7 @@ export function ArchivePanel({ notify, onRestore }) {
       <div className="settings-inline">
         <select
           aria-label="Archive project"
+          disabled={pending}
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
         >
@@ -316,8 +366,13 @@ export function ArchivePanel({ notify, onRestore }) {
           <article className="archive-card" key={file.id}>
             <img
               alt={file.name}
-              src={file.thumbnail}
-              draggable
+              src={
+                file.thumbnail ||
+                (file.item?.style
+                  ? dataSvg(buildSvg(file.item, { size: 128 }))
+                  : "")
+              }
+              draggable={file.hasPng !== false}
               onDragStart={(e) => {
                 e.preventDefault();
                 desktop.dragArchive(file.id);
@@ -342,17 +397,23 @@ export function ArchivePanel({ notify, onRestore }) {
             <div>
               <button
                 className="secondary-button"
-                disabled={pending}
+                disabled={pending || file.hasPng === false}
                 onClick={() => act("pool", file)}
+                aria-label={`Add ${file.name} to Media Pool`}
+                title="Add to Media Pool"
               >
-                Media Pool
+                <Film size={14} />
+                <span className="button-label">Media Pool</span>
               </button>
               <button
                 className="secondary-button"
-                disabled={pending}
+                disabled={pending || file.hasPng === false}
                 onClick={() => act("timeline", file)}
+                aria-label={`Add ${file.name} to timeline`}
+                title="Add to timeline"
               >
-                Timeline
+                <ListVideo size={14} />
+                <span className="button-label">Timeline</span>
               </button>
             </div>
           </article>
@@ -360,6 +421,31 @@ export function ArchivePanel({ notify, onRestore }) {
       </div>
       {!data.files.length && (
         <div className="empty-state">No generated files in this project</div>
+      )}
+      {data.total > data.files.length && (
+        <button
+          className="secondary-button archive-more"
+          disabled={pending}
+          onClick={async () => {
+            setPending(true);
+            try {
+              const next = await desktop.archiveList(
+                projectId,
+                data.files.length,
+              );
+              setData((current) => ({
+                ...next,
+                files: [...current.files, ...next.files],
+              }));
+            } catch (error) {
+              notify(error.message);
+            } finally {
+              setPending(false);
+            }
+          }}
+        >
+          Load more
+        </button>
       )}
     </div>
   );

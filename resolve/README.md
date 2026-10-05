@@ -14,9 +14,15 @@ An alternate Workflow Integration installation is available by copying the `app`
 
 Use **Download PNG**, **Media Pool**, or **Timeline** underneath the canvas. The PNG is saved before Resolve imports it. Timeline settings control the video track and insertion at the playhead or timeline end. PNG duration follows Resolve's Standard Still Duration preference; trim the clip in Resolve. Timeline placement does not ripple existing edits; use an empty video track for overlays.
 
+The panel opens in a compact window. The pin icon toggles Always on Top and remembers your choice. Tool labels appear as the window grows; hover an icon for its name. Use the Library and Inspector buttons above the canvas to open or close side panels. In narrow windows they become drawers.
+
+To import a batch, select multiple icons in the collection, then click **Media Pool** underneath the canvas. All selected icons are generated into the current project's output subfolder and imported together. The Timeline button inserts the active icon.
+
+Press **Shift+F** while Icon Studio is focused to open quick search. Type a name, use arrow keys to select, and press Enter to add an icon. Results are limited to 25 and use the downloaded local library. Change the shortcut under **Settings > Quick search**. The website has the same shortcut and popup.
+
 Drag the canvas directly to the Media Pool, timeline, Explorer, or Finder. Dragging generates a real PNG in the chosen output folder, then starts a native file drag. The drop target controls placement and copying.
 
-The **Archive** button lists generated files by project. You can reveal them on disk, reuse them in Resolve, edit a previous icon, or export a ZIP. Single, batch and iconset exports also save generated files in the chosen output folder. SVG exports retain a PNG companion for previewing and Resolve imports. Archives include existing generated PNGs and their SVG variants. They exclude raw library downloads, caches, and editable workspace data. Moving or removing a generated PNG outside the panel removes it from the archive list, and can also make the corresponding Resolve media offline.
+The **Archive** button lists generated files by project. You can reveal them on disk, reuse them in Resolve, edit a previous icon, or export a ZIP. Single, batch and iconset exports also save generated files in the chosen output folder. SVG exports retain a PNG companion for previewing and Resolve imports. Archives include existing generated PNGs and their SVG variants. They exclude raw library downloads, caches, and editable workspace data. Missing PNGs cannot be imported or dragged into Resolve; existing SVG variants remain in the archive. An icon disappears when all its generated files have been removed. Moving files outside the panel can also make the corresponding Resolve media offline.
 
 ## Project looks
 

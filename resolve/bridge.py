@@ -15,9 +15,19 @@ def timecode_frames(code, rate):
 def request(resolve, method, args):
     project=resolve.GetProjectManager().GetCurrentProject()
     if method=='context': return {'project':{'id':project.GetUniqueId(),'name':project.GetName()} if project else None,'connected':True}
-    if method!='insert': raise ValueError('Unknown operation')
+    if method not in ('insert','batch'): raise ValueError('Unknown operation')
     if project is None: raise ValueError('Open a Resolve project first.')
     if project.GetUniqueId()!=args.get('expectedProjectId'): raise ValueError('Resolve project changed.')
+    if method=='batch':
+        files=args.get('files',[])
+        if not isinstance(files,list) or not 1<=len(files)<=200: raise ValueError('Select up to 200 icons.')
+        paths=[Path(file) for file in files]
+        if any(not file.is_absolute() or file.suffix.lower()!='.png' or not file.is_file() for file in paths): raise ValueError('Choose existing generated PNG files.')
+        pool=project.GetMediaPool()
+        clips=pool.ImportMedia([{'FilePath':str(file)} for file in paths])
+        if not clips: clips=pool.ImportMedia([str(file) for file in paths])
+        if not clips: raise ValueError('Resolve could not import these PNGs.')
+        return {'imported':len(clips)}
     file=Path(args['file'])
     if not file.is_absolute() or file.suffix.lower()!='.png' or not file.is_file(): raise ValueError('Choose an existing PNG file.')
     pool=project.GetMediaPool()

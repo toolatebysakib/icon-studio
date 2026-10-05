@@ -52,4 +52,14 @@ function importFile(resolve, file, options, kind, expectedProjectId) {
     );
   return { imported: 1, added: appended.length, recordFrame: frame };
 }
-module.exports = { context, importFile };
+function importFiles(resolve, files, expectedProjectId) {
+  const project = resolve.GetProjectManager().GetCurrentProject();
+  if (!project || project.GetUniqueId() !== expectedProjectId)
+    throw Error("Resolve project changed.");
+  const pool = project.GetMediaPool();
+  let clips = pool.ImportMedia(files.map((file) => ({ FilePath: file })));
+  if (!clips?.length) clips = pool.ImportMedia(files);
+  if (!clips?.length) throw Error("Resolve could not import these PNGs.");
+  return { imported: clips.length };
+}
+module.exports = { context, importFile, importFiles };

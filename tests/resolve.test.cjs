@@ -8,7 +8,7 @@ const {
   inside,
   timecodeToFrames,
 } = require("../resolve/core.cjs");
-const { importFile } = require("../resolve/resolve-actions.cjs");
+const { importFile, importFiles } = require("../resolve/resolve-actions.cjs");
 test("projects inherit the latest look and restore previous project looks by stable ID", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "iconstudio-"));
   try {
@@ -83,6 +83,10 @@ test("archives contain generated files only and reject invalid PNGs or project r
     fs.unlinkSync(file.svgPath);
     assert.equal(Object.keys(store.archiveEntries()).length, 2);
     fs.unlinkSync(file.path);
+    assert.equal(store.archive().files.length, 1);
+    assert.equal(store.archive().files[0].hasPng, false);
+    assert.equal(Object.keys(store.archiveEntries()).length, 1);
+    fs.unlinkSync(file.svgPaths[0]);
     assert.equal(store.archive().files.length, 0);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
@@ -138,4 +142,22 @@ test("drop-frame timecode and archive paths reject common edge cases", () => {
   assert.equal(timecodeToFrames("01:00:00;00", 29.97), 107892);
   assert.equal(timecodeToFrames("00:10:00;00", 59.94), 35964);
   assert.equal(inside("/icons", "/icons/../secrets"), false);
+});
+test("batch import sends all selected paths and uses the compatible string-list fallback", () => {
+  const calls = [];
+  const pool = {
+    ImportMedia: (files) => {
+      calls.push(files);
+      return typeof files[0] === "string" ? files.map(() => ({})) : null;
+    },
+  };
+  const project = { GetUniqueId: () => "p", GetMediaPool: () => pool };
+  const resolve = {
+    GetProjectManager: () => ({ GetCurrentProject: () => project }),
+  };
+  assert.deepEqual(importFiles(resolve, ["first.png", "second.png"], "p"), {
+    imported: 2,
+  });
+  assert.deepEqual(calls[1], ["first.png", "second.png"]);
+  assert.throws(() => importFiles(resolve, ["first.png"], "other"), /changed/);
 });

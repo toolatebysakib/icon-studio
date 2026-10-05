@@ -1,0 +1,403 @@
+/* Cards own their spacing; swatches size themselves to the available width. */
+.inspector-scroll {
+  padding: 0;
+  min-width: 0;
+}
+.inspector .control-section {
+  min-width: 0;
+}
+.control-section .palette-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+}
+.control-section .palette-grid button {
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  aspect-ratio: 1;
+  max-height: 34px;
+}
+.control-section .colors {
+  min-width: 0;
+}
+.brand {
+  min-width: 0;
+  flex-shrink: 0;
+}
+.pin-button.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.resolve-download-button {
+  padding: 8px 10px;
+}
+.archive-more {
+  margin-top: 18px;
+}
+.stage-actions .resolve-actions {
+  display: contents;
+}
+.inspector-toggle,
+.inspector-close,
+.panel-backdrop {
+  display: none;
+}
+.quick-search-content {
+  padding: 0 24px 18px;
+}
+.quick-search-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+}
+.quick-search-input input {
+  flex: 1;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none;
+  padding: 5px !important;
+  font-size: 15px;
+}
+.quick-search-input kbd {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.quick-search-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+  max-height: 52vh;
+  overflow: auto;
+  padding: 3px;
+}
+.quick-search-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 12px 5px;
+  min-height: 94px;
+  min-width: 0;
+}
+.quick-search-result img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%);
+}
+.quick-search-result span {
+  font-size: 10px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quick-search-result.selected,
+.quick-search-result:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.quick-search-content footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 15px;
+}
+.app[data-theme="dark"] .quick-search-result img {
+  filter: brightness(0) invert(0.85);
+}
+.app[data-desktop="true"] {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.app[data-desktop="true"] .app-header {
+  height: 52px;
+  padding: 0 12px;
+  position: relative;
+  gap: 10px;
+}
+.app[data-desktop="true"] .workspace {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 280px;
+  min-height: 0;
+  overflow: hidden;
+}
+.app[data-desktop="true"] .workspace.library-hidden {
+  grid-template-columns: minmax(0, 1fr) 280px;
+}
+.app[data-desktop="true"][data-inspector-open="false"] .workspace {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+.app[data-desktop="true"][data-inspector-open="false"]
+  .workspace.library-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+.app[data-desktop="true"][data-inspector-open="false"] .inspector {
+  display: none;
+}
+.app[data-desktop="true"] .inspector-toggle {
+  display: inline-flex;
+}
+.app[data-desktop="true"] .library-panel,
+.app[data-desktop="true"] .inspector {
+  min-width: 0;
+  max-height: none;
+  grid-column: auto;
+  grid-row: auto;
+}
+.app[data-desktop="true"] .library-heading .icon-button {
+  display: inline-flex;
+}
+.app[data-desktop="true"] .library-panel .icon-library {
+  flex: 1;
+  max-height: none;
+  min-height: 0;
+  overflow: auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.app[data-desktop="true"] .inspector-scroll {
+  overflow: auto;
+  min-height: 0;
+  padding: 0;
+}
+.app[data-desktop="true"] .inspector-scroll > .control-section {
+  display: block;
+  width: auto;
+  margin: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+.app[data-desktop="true"] .inspector-heading {
+  height: 42px;
+  padding: 0 14px;
+}
+.app[data-desktop="true"] .inspector-tabs {
+  padding: 0 14px;
+}
+.app[data-desktop="true"] .inspector-reset {
+  padding: 15px;
+}
+.app[data-desktop="true"] .canvas-toolbar {
+  height: 40px;
+  padding: 0 12px;
+}
+.app[data-desktop="true"] .stage {
+  min-height: 0;
+  padding: 14px 12px 46px;
+}
+.app[data-desktop="true"] .stage-art {
+  min-height: 0 !important;
+  max-width: 100%;
+  margin: auto 0 7px;
+  padding: 0;
+}
+.app[data-desktop="true"] .stage-name {
+  margin: 0 0 7px;
+}
+.app[data-desktop="true"] .stage-name button {
+  font-size: 11px;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app[data-desktop="true"] .stage-actions {
+  flex-shrink: 0;
+  padding: 7px 9px;
+  margin: 0;
+}
+.app[data-desktop="true"] .resolve-actions {
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+.app[data-desktop="true"] .resolve-actions button {
+  padding: 7px 11px;
+}
+.app[data-desktop="true"] .preview-presets,
+.app[data-desktop="true"] .native-drag-label {
+  display: none;
+}
+.app[data-desktop="true"] .stage-bottom {
+  bottom: 10px;
+  left: 12px;
+  right: 12px;
+}
+.app[data-desktop="true"] .collection-panel {
+  height: 146px;
+  padding: 0 12px;
+}
+.app[data-desktop="true"] .collection-header {
+  height: 34px;
+}
+.app[data-desktop="true"] .collection-item,
+.app[data-desktop="true"] .collection-add {
+  height: 86px;
+  min-width: 74px;
+  max-width: 74px;
+}
+.app[data-desktop="true"] .collection-item .icon-preview {
+  width: 50px !important;
+  height: 50px !important;
+}
+.app[data-desktop="true"] .collection-item > span:last-child {
+  max-width: 64px;
+}
+.app[data-desktop="true"] .collection-header > div {
+  gap: 4px;
+}
+@media (max-width: 1100px) {
+  .header-center {
+    display: none;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .header-actions
+    :is(.quiet-button, .primary-button, .resolve-download-button) {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    gap: 0;
+  }
+  .header-actions :is(.quiet-button, .primary-button) > span,
+  .header-actions .resolve-download-button .button-label {
+    display: none;
+  }
+  .header-actions :is(.project-button, .primary-button) > svg:last-child {
+    display: none;
+  }
+  .header-actions > .divider {
+    display: none;
+  }
+  .app[data-desktop="true"] .workspace,
+  .app[data-desktop="true"] .workspace.library-hidden {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+  .app[data-desktop="true"][data-inspector-open="false"] .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app[data-desktop="true"] .library-panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: min(300px, calc(100% - 28px));
+    z-index: 22;
+    box-shadow: 12px 0 35px #0004;
+  }
+  .app[data-desktop="true"][data-library-open="true"] .panel-backdrop {
+    display: block;
+  }
+  .app[data-desktop="true"] .panel-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: #0004;
+  }
+  .app[data-desktop="true"]
+    :is(.stage-actions, .resolve-actions, .collection-header)
+    .button-label {
+    display: none;
+  }
+  .app[data-desktop="true"] .collection-add .button-label {
+    display: none;
+  }
+  .app[data-desktop="true"] .stage-actions button {
+    min-width: 30px;
+    height: 24px;
+    justify-content: center;
+    padding: 3px;
+  }
+  .app[data-desktop="true"] .collection-header .quiet-button {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+}
+@media (max-width: 719px) {
+  .app[data-desktop="true"] .workspace,
+  .app[data-desktop="true"] .workspace.library-hidden {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app[data-desktop="true"] .inspector {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(310px, calc(100% - 28px));
+    z-index: 22;
+    box-shadow: -12px 0 35px #0004;
+    border-left: 1px solid var(--border);
+  }
+  .app[data-desktop="true"][data-inspector-open="true"] .panel-backdrop {
+    display: block;
+  }
+  .app[data-desktop="true"] .inspector-close {
+    display: inline-flex;
+  }
+}
+@media (max-width: 680px) {
+  .header-actions button[aria-label="Help and shortcuts"],
+  .header-actions button[aria-label^="Switch to"] {
+    display: none;
+  }
+  .header-actions {
+    gap: 3px;
+  }
+  .app-header {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .header-actions
+    :is(.quiet-button, .primary-button, .resolve-download-button) {
+    width: 29px;
+    height: 29px;
+    padding: 5px;
+  }
+  .brand {
+    gap: 7px;
+  }
+  .brand-symbol {
+    height: 27px;
+    width: 27px;
+  }
+  .brand strong {
+    font-size: 13px;
+  }
+  .stage-actions .button-label,
+  .collection-header .button-label {
+    display: none;
+  }
+  .archive-card .button-label {
+    display: none;
+  }
+  .stage-actions button {
+    min-width: 29px;
+    justify-content: center;
+  }
+  .inspector-scroll > .control-section {
+    display: block;
+    width: auto;
+    margin: 12px;
+  }
+  .quick-search-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .quick-search-content {
+    padding: 0 16px 16px;
+  }
+  .quick-search-content footer {
+    font-size: 9px;
+  }
+}

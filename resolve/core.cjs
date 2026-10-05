@@ -40,6 +40,7 @@ function blank() {
       track: 2,
       position: "playhead",
       libraryCount: 0,
+      alwaysOnTop: false,
     },
     projects: {},
     lastLook: null,
@@ -249,9 +250,22 @@ class StudioStore {
     return file;
   }
   archive(projectId = "") {
-    const files = this.state.files.filter(
-      (v) => (!projectId || v.projectId === projectId) && fs.existsSync(v.path),
-    );
+    const files = this.state.files
+      .filter((v) => !projectId || v.projectId === projectId)
+      .map((v) => {
+        const hasPng = fs.existsSync(v.path);
+        const svgPaths = (v.svgPaths || (v.svgPath ? [v.svgPath] : [])).filter(
+          (file) => fs.existsSync(file),
+        );
+        return {
+          ...v,
+          hasPng,
+          svgPaths,
+          displayPath: hasPng ? v.path : svgPaths[0],
+          projectName: this.state.projects[v.projectId]?.name || v.projectName,
+        };
+      })
+      .filter((v) => v.hasPng || v.svgPaths.length);
     return {
       projects: Object.values(this.state.projects).map(({ id, name }) => ({
         id,
@@ -271,9 +285,10 @@ class StudioStore {
           .update(file.projectId)
           .digest("hex")
           .slice(0, 8);
-      entries[`${project}/${path.basename(file.path)}`] = fs.readFileSync(
-        file.path,
-      );
+      if (file.hasPng)
+        entries[`${project}/${path.basename(file.path)}`] = fs.readFileSync(
+          file.path,
+        );
       for (const svgPath of file.svgPaths ||
         (file.svgPath ? [file.svgPath] : []))
         if (fs.existsSync(svgPath))
