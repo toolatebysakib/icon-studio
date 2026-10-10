@@ -3,7 +3,7 @@ mod events;
 mod background;
 use icon_studio_core::*;
 use serde_json::{Value,json};
-use std::{cell::RefCell,collections::{HashMap,HashSet}};
+use std::{cell::RefCell,collections::{HashMap,HashSet},rc::Rc};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::{spawn_local,JsFuture};
 use web_sys::*;
@@ -28,7 +28,7 @@ pub struct App {
  pub items:Vec<Item>,pub active:usize,pub selected:HashSet<String>,pub undo:Vec<Vec<Item>>,pub redo:Vec<Vec<Item>>,
  pub theme:String,pub modal:String,pub panel:String,pub library_open:bool,pub inspector_open:bool,pub checker:bool,pub zoom:f64,
  pub query:String,pub quick_query:String,pub quick_index:usize,pub category:String,pub tab:String,
- pub catalog:Value,pub index:HashMap<String,Vec<String>>,pub starter:HashMap<String,String>,pub artwork:HashMap<String,String>,pub packs:HashMap<String,Value>,pub results:Vec<Icon>,pub quick_results:Vec<Icon>,pub generation:u64,
+ pub catalog:Value,pub index:HashMap<String,Vec<String>>,pub starter:HashMap<String,String>,pub artwork:HashMap<String,String>,pub packs:HashMap<String,Rc<Value>>,pub results:Vec<Icon>,pub quick_results:Vec<Icon>,pub generation:u64,
  pub shortcut:Shortcut,pub recording:bool,pub looks:Vec<Value>,pub look_name:String,pub rule:RenameRule,pub rename_error:String,
  pub project:Value,pub settings:Value,pub archive:Value,pub archive_project:String,pub native:bool,pub token:String,pub toast:String,pub busy:bool,pub export_size:u32,pub glyph_only:bool,pub pack_selection:HashSet<String>,pub pack_query:String,pub library_progress:String,
 }
@@ -66,8 +66,18 @@ pub async fn api(method:&str,args:Value)->Result<Value,String>{
  let init=RequestInit::new();init.set_method("POST");init.set_body(&JsValue::from_str(&json!({"method":method,"args":args}).to_string()));let headers=Headers::new().map_err(js_error)?;headers.set("Content-Type","application/json").map_err(js_error)?;headers.set("X-Icon-Studio-Token",&with(|a|a.token.clone())).map_err(js_error)?;init.set_headers(&headers);
  let response=JsFuture::from(window().fetch_with_str_and_init("/api",&init)).await.map_err(js_error)?.dyn_into::<Response>().map_err(js_error)?;let v=JsFuture::from(response.text().map_err(js_error)?).await.map_err(js_error)?.as_string().unwrap_or_default();let v:Value=serde_json::from_str(&v).map_err(|_|"Invalid app response")?;if v["ok"]!=true{return Err(text(&v,"error").into())}Ok(v["result"].clone())
 }
-pub async fn load_pack(prefix:&str)->Result<Value,String>{if let Some(p)=with(|a|a.packs.get(prefix).cloned()){return Ok(p)}let bytes=fetch_bytes(&format!("library/{prefix}.json.gz")).await?;let value:Value=serde_json::from_slice(&gunzip(&bytes)?).map_err(|_|"Invalid icon collection")?;change(|a|{if a.packs.len()>=6{if let Some(k)=a.packs.keys().next().cloned(){a.packs.remove(&k);}}a.packs.insert(prefix.into(),value.clone());});Ok(value)}
-pub async fn icon_svg(icon:&Icon)->Result<String,String>{if let Some(s)=with(|a|a.starter.get(&icon.id()).cloned()){return Ok(s)}collection_svg(&load_pack(&icon.prefix).await?,&icon.name)}
+pub async fn load_pack(prefix:&str,name:&str)->Result<Rc<Value>,String>{
+ let file=with(|a|{
+  let pack=a.catalog["collections"].as_array().and_then(|packs|packs.iter().find(|p|text(p,"prefix")==prefix));
+  let Some(pack)=pack else{return format!("{prefix}.json.gz")};
+  let position=a.index.get(prefix).and_then(|names|names.iter().position(|n|n==name)).unwrap_or(0)as u64;
+  pack["chunks"].as_array().and_then(|chunks|chunks.iter().find(|c|position>=c["start"].as_u64().unwrap_or(0)&&position<c["start"].as_u64().unwrap_or(0)+c["count"].as_u64().unwrap_or(0))).map(|chunk|text(chunk,"file").to_string()).unwrap_or_else(||text(pack,"file").to_string())
+ });
+ if let Some(pack)=with(|a|a.packs.get(&file).cloned()){return Ok(pack)}
+ let bytes=fetch_bytes(&format!("library/{file}")).await?;let value:Value=serde_json::from_slice(&gunzip(&bytes)?).map_err(|_|"Invalid icon collection")?;let value=Rc::new(value);
+ change(|a|{if a.packs.len()>=6{if let Some(key)=a.packs.keys().next().cloned(){a.packs.remove(&key);}}a.packs.insert(file,value.clone());});Ok(value)
+}
+pub async fn icon_svg(icon:&Icon)->Result<String,String>{if let Some(s)=with(|a|a.starter.get(&icon.id()).cloned()){return Ok(s)}let pack=load_pack(&icon.prefix,&icon.name).await?;collection_svg(&pack,&icon.name)}
 pub fn matches_icons(a:&App,quick:bool)->Vec<Icon>{
  let q=if quick{&a.quick_query}else{&a.query};let q=q.trim().to_lowercase();let words:Vec<_>=q.split_whitespace().collect();let limit=if quick{25}else{90};
  let mut packs:Vec<_>=a.catalog["collections"].as_array().cloned().unwrap_or_default();packs.sort_by_key(|p|{let featured=["fluent-emoji","noto","twemoji","openmoji","logos","devicon","skill-icons","flat-color-icons"];let priority=featured.iter().position(|s|*s==text(p,"prefix")).unwrap_or(100);(!flag(p,"color"),priority,text(p,"name").to_string())});

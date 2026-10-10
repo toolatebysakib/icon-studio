@@ -55,9 +55,13 @@ impl Host {
  fn download_library(&self,args:&Value)->Result<Value,String>{
   let folder={let s=self.store.lock().map_err(|_|"Store is busy")?;let p=text(&s.state["settings"],"rawFolder");if p.is_empty(){return Err("Choose a raw icon library folder first".into())}PathBuf::from(p).join("icon-studio-library-v2")};fs::create_dir_all(&folder).map_err(|e|e.to_string())?;
   let catalog:Value=serde_json::from_slice(&fs::read(self.assets.join("library/catalog.json")).map_err(|e|e.to_string())?).map_err(|_|"Invalid collection catalog")?;
-  let selected=args["prefixes"].as_array().ok_or("Select collections first")?;if selected.len()>300{return Err("Too many collections".into())}let mut count=0;
-  for prefix in selected{let prefix=prefix.as_str().ok_or("Invalid collection")?;let pack=catalog["collections"].as_array().unwrap().iter().find(|p|p["prefix"]==prefix).ok_or("Unknown collection")?;let file=text(pack,"file");let bytes=ureq::get(format!("https://iconeditor.pages.dev/library/{file}")).call().map_err(|e|e.to_string())?.body_mut().with_config().limit(25_000_000).read_to_vec().map_err(|e|e.to_string())?;
-   if store::hash(&bytes)!=text(pack,"sha256"){return Err(format!("Integrity check failed for {prefix}"))}gunzip(&bytes)?;store::atomic_write(&folder.join(file),&bytes)?;count+=1;
+  let selected=args["prefixes"].as_array().ok_or("Select collections first")?;if selected.len()>300{return Err("Too many collections".into())}let mut count=0;let agent=ureq::Agent::new_with_defaults();
+  for prefix in selected{let prefix=prefix.as_str().ok_or("Invalid collection")?;let pack=catalog["collections"].as_array().unwrap().iter().find(|p|p["prefix"]==prefix).ok_or("Unknown collection")?;
+   let chunks=pack["chunks"].as_array().cloned().unwrap_or_else(||vec![pack.clone()]);
+   for chunk in chunks{let file=text(&chunk,"file");let destination=folder.join(file);if destination.is_file(){if let Ok(bytes)=fs::read(&destination){if store::hash(&bytes)==text(&chunk,"sha256"){continue}}}
+    let bytes=agent.get(format!("https://iconeditor.pages.dev/library/{file}")).call().map_err(|e|e.to_string())?.body_mut().with_config().limit(25_000_000).read_to_vec().map_err(|e|e.to_string())?;
+    if store::hash(&bytes)!=text(&chunk,"sha256"){return Err(format!("Integrity check failed for {prefix}"))}gunzip(&bytes)?;store::atomic_write(&destination,&bytes)?;
+   }count+=1;
   }
   for name in ["catalog.json","index.json.gz","LICENSES.txt"]{fs::copy(self.assets.join("library").join(name),folder.join(name)).map_err(|e|e.to_string())?;}
   let notices=self.assets.join("library/licenses");let target=folder.join("licenses");fs::create_dir_all(&target).map_err(|e|e.to_string())?;for entry in fs::read_dir(notices).map_err(|e|e.to_string())?{let entry=entry.map_err(|e|e.to_string())?;if entry.path().is_file(){fs::copy(entry.path(),target.join(entry.file_name())).map_err(|e|e.to_string())?;}}
