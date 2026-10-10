@@ -32,7 +32,7 @@ pub struct App {
  pub shortcut:Shortcut,pub recording:bool,pub looks:Vec<Value>,pub look_name:String,pub rule:RenameRule,pub rename_error:String,
  pub project:Value,pub settings:Value,pub archive:Value,pub archive_project:String,pub native:bool,pub token:String,pub toast:String,pub busy:bool,pub export_size:u32,pub glyph_only:bool,pub pack_selection:HashSet<String>,pub pack_query:String,pub library_progress:String,
 }
-impl Default for App {fn default()->Self{Self{items:vec![],active:0,selected:HashSet::new(),undo:vec![],redo:vec![],theme:"light".into(),modal:String::new(),panel:"style".into(),library_open:false,inspector_open:false,checker:false,zoom:1.,query:String::new(),quick_query:String::new(),quick_index:0,category:"color".into(),tab:"explore".into(),catalog:json!({}),index:HashMap::new(),starter:HashMap::new(),artwork:HashMap::new(),packs:HashMap::new(),results:vec![],quick_results:vec![],generation:0,shortcut:Shortcut::preset(0),recording:false,looks:vec![],look_name:String::new(),rule:RenameRule::default(),rename_error:String::new(),project:Value::Null,settings:json!({}),archive:json!({}),archive_project:String::new(),native:false,token:String::new(),toast:String::new(),busy:false,export_size:1024,glyph_only:false,pack_selection:HashSet::new(),pack_query:String::new(),library_progress:String::new()}}}
+impl Default for App {fn default()->Self{Self{items:vec![],active:0,selected:HashSet::new(),undo:vec![],redo:vec![],theme:"light".into(),modal:String::new(),panel:"style".into(),library_open:false,inspector_open:false,checker:false,zoom:1.,query:String::new(),quick_query:String::new(),quick_index:0,category:"featured".into(),tab:"explore".into(),catalog:json!({}),index:HashMap::new(),starter:HashMap::new(),artwork:HashMap::new(),packs:HashMap::new(),results:vec![],quick_results:vec![],generation:0,shortcut:Shortcut::preset(0),recording:false,looks:vec![],look_name:String::new(),rule:RenameRule::default(),rename_error:String::new(),project:Value::Null,settings:json!({}),archive:json!({}),archive_project:String::new(),native:false,token:String::new(),toast:String::new(),busy:false,export_size:1024,glyph_only:false,pack_selection:HashSet::new(),pack_query:String::new(),library_progress:String::new()}}}
 thread_local!{pub static APP:RefCell<App>=RefCell::new(App::default());}
 pub fn with<R>(f:impl FnOnce(&App)->R)->R{APP.with(|a|f(&a.borrow()))}
 pub fn change<R>(f:impl FnOnce(&mut App)->R)->R{APP.with(|a|f(&mut a.borrow_mut()))}
@@ -42,6 +42,10 @@ pub fn uuid()->String{format!("{:x}-{:x}",js_sys::Date::now() as u64,(js_sys::Ma
 pub fn js_error(e:JsValue)->String{e.as_string().or_else(||js_sys::Reflect::get(&e,&"message".into()).ok().and_then(|v|v.as_string())).unwrap_or("Operation failed".into())}
 pub fn local_get(k:&str)->Option<String>{window().local_storage().ok().flatten()?.get_item(k).ok().flatten()}
 pub fn local_set(k:&str,v:&str){if let Ok(Some(s))=window().local_storage(){let _=s.set_item(k,v);}}
+pub fn announcement_active()->bool{
+ let c:Value=serde_json::from_str(include_str!("../../assets/library-announcement.json")).unwrap_or(Value::Null);
+ let now=js_sys::Date::now();now>=c["startsAt"].as_f64().unwrap_or(f64::MAX)&&now<c["endsAt"].as_f64().unwrap_or(0.)&&local_get("icon-studio-announcement-expanded-library-2026-10").as_deref()!=Some("dismissed")
+}
 pub fn toast(s:impl Into<String>){change(|a|a.toast=s.into());render();}
 pub fn snapshot(){change(|a|{a.undo.push(a.items.clone());if a.undo.len()>40{a.undo.remove(0);}a.redo.clear();});}
 pub fn persist(){
@@ -80,8 +84,12 @@ pub async fn load_pack(prefix:&str,name:&str)->Result<Rc<Value>,String>{
 pub async fn icon_svg(icon:&Icon)->Result<String,String>{if let Some(s)=with(|a|a.starter.get(&icon.id()).cloned()){return Ok(s)}let pack=load_pack(&icon.prefix,&icon.name).await?;collection_svg(&pack,&icon.name)}
 pub fn matches_icons(a:&App,quick:bool)->Vec<Icon>{
  let q=if quick{&a.quick_query}else{&a.query};let q=q.trim().to_lowercase();let words:Vec<_>=q.split_whitespace().collect();let limit=if quick{25}else{90};
+ if q.is_empty()&&(quick||a.category=="featured"&&a.tab=="explore"){
+  let ids:Vec<String>=serde_json::from_str(include_str!("../../assets/featured.json")).unwrap_or_default();
+  return ids.iter().filter_map(|id|id.split_once(':').map(|(p,n)|Icon{prefix:p.into(),name:n.into()})).take(limit).collect()
+ }
  let mut packs:Vec<_>=a.catalog["collections"].as_array().cloned().unwrap_or_default();packs.sort_by_key(|p|{let featured=["fluent-emoji","noto","twemoji","openmoji","logos","devicon","skill-icons","flat-color-icons"];let priority=featured.iter().position(|s|*s==text(p,"prefix")).unwrap_or(100);(!flag(p,"color"),priority,text(p,"name").to_string())});
- let favorites:HashSet<String>=local_get("icon-studio-favorites").and_then(|v|serde_json::from_str(&v).ok()).unwrap_or_default();let mut found=vec![];for p in packs{let prefix=text(&p,"prefix");if !quick&&a.category!="all"&&a.category!="color"&&a.category!=prefix{continue}if !quick&&a.category=="color"&&!flag(&p,"color"){continue}
+ let favorites:HashSet<String>=local_get("icon-studio-favorites").and_then(|v|serde_json::from_str(&v).ok()).unwrap_or_default();let mut found=vec![];for p in packs{let prefix=text(&p,"prefix");if !quick&&a.category!="featured"&&a.category!="all"&&a.category!="color"&&a.category!=prefix{continue}if !quick&&a.category=="color"&&!flag(&p,"color"){continue}
  if let Some(names)=a.index.get(prefix){for n in names{let hay=format!("{prefix} {} {}",n.replace(['-','_']," "),text(&p,"name")).to_lowercase();if !words.iter().all(|w|hay.contains(w)){continue}let icon=Icon{prefix:prefix.into(),name:n.clone()};if !quick&&a.tab=="favorites"{if !favorites.contains(&icon.id()){continue}}
  found.push(icon);if found.len()>=limit{return found}
  }}}
@@ -100,6 +108,9 @@ pub async fn save_bytes(bytes:Vec<u8>,name:&str,mime:&str)->Result<(),String>{if
 
 #[wasm_bindgen(start)]pub fn start(){
  events::install();
+ let campaign:Value=serde_json::from_str(include_str!("../../assets/library-announcement.json")).unwrap_or(Value::Null);
+ let delay=(campaign["endsAt"].as_f64().unwrap_or(0.)-js_sys::Date::now()).max(0.).min(i32::MAX as f64)as i32;
+ if delay>0{let expire=Closure::<dyn FnMut()>::new(render);let _=window().set_timeout_with_callback_and_timeout_and_arguments_0(expire.as_ref().unchecked_ref(),delay);expire.forget();}
  let native=js_sys::Reflect::get(&window(),&"__ICON_STUDIO_TOKEN".into()).ok().and_then(|v|v.as_string());
  change(|a|{a.native=native.is_some();a.token=native.unwrap_or_default();a.theme=local_get("icon-studio-theme").filter(|s|s=="dark").unwrap_or("light".into());a.looks=local_get("icon-studio-looks-v1").and_then(|v|serde_json::from_str(&v).ok()).unwrap_or_default();a.shortcut=local_get("icon-studio-search-shortcut").and_then(|v|serde_json::from_str(&v).ok()).unwrap_or_else(||Shortcut::preset(0));});render();
  spawn_local(async{

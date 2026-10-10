@@ -74,6 +74,9 @@ import "./style.css";
 import "./theme.css";
 import "./product.css";
 import "./compact.css";
+import featured from "./featured.json";
+import expandedCollections from "./library-collections.json";
+import LibraryAnnouncement from "./LibraryAnnouncement";
 import QuickSearch from "./QuickSearch";
 import { readShortcut, matchesShortcut, shortcutLabel } from "./shortcuts";
 import { readLooks, writeLooks, cleanStyle, parseLooks } from "./looks";
@@ -86,7 +89,7 @@ import {
 } from "./StudioPanels";
 
 const library = fullLibrary.filter((i) => !i.isAnimated);
-const collections = fullCollections.filter((c) => !c.isAnimated);
+const collections = [{id:"featured",prefix:"",name:"Featured"},{id:"all",prefix:"all",name:"All collections"}, ...fullCollections.filter(c => ["apple","brands","ui"].includes(c.prefix)), ...expandedCollections];
 function defaultLook() {
   try {
     return {
@@ -305,7 +308,7 @@ function App() {
   itemsRef.current = items;
   const [query, setQuery] = useState(""),
     [prefix, setPrefix] = useState(""),
-    [results, setResults] = useState(library),
+    [results, setResults] = useState(() => featured.map(id => library.find(i => i.fullName === id)).filter(Boolean)),
     [searchBusy, setSearchBusy] = useState(false),
     [tabName, setTabName] = useState("library");
   const [favorites, setFavorites] = useState(() => {
@@ -1060,6 +1063,7 @@ function App() {
       }}
       onDrop={onDrop}
     >
+      <LibraryAnnouncement desktop={desktop} notify={notify} onReady={() => searchIcons(query, prefix, false).then(setResults)} />
       <input
         ref={fileInput}
         className="hidden"

@@ -1,6 +1,6 @@
 # Icon Studio by Sakib for DaVinci Resolve
 
-Requires DaVinci Resolve Studio 19.0.2+ on Windows or macOS. Resolve 21 includes its own Python runtime. Older versions require a compatible 64-bit Python installation for Python scripts. The editor and PNG renderer are identical to the website.
+Requires DaVinci Resolve Studio 19.0.2+ on Windows or macOS. Resolve 21 includes its own Python runtime. Older versions require a compatible 64-bit Python installation for Python scripts. The panel retains the previous editor and Resolve connector.
 
 ## Install
 
@@ -40,3 +40,7 @@ The Utility launcher uses a token-protected loopback connection to its own Resol
 
 Windows Resolve integration is tested during development. The macOS installer and launcher are reviewed for paths, quoting and architecture, but require a real Mac to validate native dragging and Resolve behavior.
 
+
+## Expanded library
+
+The previous Electron/Python Resolve app is retained. Version 4.0.1 adds the compressed library of 382,085 named icons across 235 open-source collections. Search uses the bundled name index; individual artwork chunks can load online until you download the approximately 101 MB ZIP from Settings. Downloaded artwork is read locally, with a bounded six-chunk cache. The library stays in its compressed collection format rather than expanding into hundreds of thousands of SVG files. Existing project archives, output folders, looks, shortcuts and timeline insertion are retained. Explore starts with 18 everyday icons. A dismissible library update card is shown only during the five days after this release and offers the offline download if it is not installed.

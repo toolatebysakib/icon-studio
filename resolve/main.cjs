@@ -14,6 +14,8 @@ const fs = require("node:fs"),
   crypto = require("node:crypto");
 const { StudioStore, inside, atomicWrite, safeName } = require("./core.cjs");
 const actions = require("./resolve-actions.cjs");
+const { IconLibrary } = require("./library.cjs");
+let expandedLibrary;
 let zip;
 try {
   zip = require("./vendor/fflate.cjs");
@@ -197,11 +199,17 @@ function handlers() {
   });
   register("settings", () => ({
     ...store.state.settings,
-    libraryCount: index().length,
+    libraryCount: expandedLibrary.installedCount(),
+    availableLibraryCount: expandedLibrary.catalog.count,
   }));
   register("setAlwaysOnTop", (value) => {
-    window.setAlwaysOnTop(value === true);
-    store.state.settings.alwaysOnTop = window.isAlwaysOnTop();
+    const enabled = value === true;
+    // Use the explicit floating level so Resolve's bundled Electron keeps the
+    // panel above the host window on both Windows and macOS.
+    window.setAlwaysOnTop(enabled, "floating");
+    if (process.platform === "darwin")
+      window.setVisibleOnAllWorkspaces(enabled, { visibleOnFullScreen: enabled });
+    store.state.settings.alwaysOnTop = enabled;
     store.persist();
     return store.state.settings.alwaysOnTop;
   });
@@ -355,32 +363,14 @@ function handlers() {
       dialog.showErrorBox("Icon Studio", error.message);
     }
   });
-  register("searchIcons", (query, prefix, limit) => {
-    const q = String(query || "").toLowerCase();
-    const root = path.join(
-      store.state.settings.rawFolder,
-      "icon-studio-library",
-    );
-    return index()
-      .filter(
-        (icon) =>
-          (!prefix || prefix === icon.prefix) &&
-          (!q || `${icon.name} ${icon.title}`.toLowerCase().includes(q)),
-      )
-      .slice(0, Math.max(1, Math.min(180, Number(limit) || (q ? 180 : 96))))
-      .map((icon) => ({
-        ...icon,
-        rawSvg: fs.readFileSync(path.join(root, icon.file), "utf8"),
-      }));
-  });
-  register("readIcon", (name) => {
-    const icon = index().find((icon) => icon.fullName === name);
+  register("searchIcons", (query, prefix, limit) => expandedLibrary.search(query, prefix, limit));
+  register("readIcon", async (name) => {
+    const svg = await expandedLibrary.read(name);
+    if (svg) return svg;
+    const icon = index().find(icon => icon.fullName === name);
     if (!icon) return null;
-    const root = path.join(
-        store.state.settings.rawFolder,
-        "icon-studio-library",
-      ),
-      file = path.join(root, icon.file);
+    const root = path.join(store.state.settings.rawFolder, "icon-studio-library");
+    const file = path.join(root, icon.file);
     if (!inside(root, file)) throw Error("Invalid icon path");
     return fs.readFileSync(file, "utf8");
   });
@@ -391,20 +381,20 @@ function handlers() {
       fs.readFileSync(path.join(__dirname, "library-release.json"), "utf8"),
     );
     const response = await fetch(config.url, {
-      signal: AbortSignal.timeout(120000),
+      signal: AbortSignal.timeout(600000),
     });
     if (!response.ok)
       throw Error(`Icon library unavailable (${response.status}). Try again.`);
     const declared = Number(response.headers.get("content-length"));
-    if (declared > 80 * 1024 * 1024) throw Error("Icon library is too large.");
+    if (declared > 160 * 1024 * 1024) throw Error("Icon library is too large.");
     const bytes = Buffer.from(await response.arrayBuffer());
     if (
-      bytes.length > 80 * 1024 * 1024 ||
+      bytes.length > 160 * 1024 * 1024 ||
       crypto.createHash("sha256").update(bytes).digest("hex") !== config.sha256
     )
       throw Error("Icon library checksum did not match.");
     const entries = zip.unzipSync(bytes),
-      root = path.join(folder, "icon-studio-library");
+      root = path.join(folder, "icon-studio-library-v2");
     let total = 0;
     for (const [name, data] of Object.entries(entries)) {
       total += data.length;
@@ -412,9 +402,9 @@ function handlers() {
         throw Error("Library exceeds its size limit.");
       const target = path.join(folder, name);
       if (
-        !name.startsWith("icon-studio-library/") ||
+        !name.startsWith("icon-studio-library-v2/") ||
         !inside(root, target) ||
-        !/\.(svg|json|txt|md)$/.test(name)
+        !/\.(svg|json|gz|txt|md)$/.test(name)
       )
         throw Error("Invalid library archive.");
     }
@@ -422,9 +412,12 @@ function handlers() {
     for (const [name, data] of Object.entries(entries))
       atomicWrite(path.join(folder, name), Buffer.from(data));
     iconIndexFolder = "";
-    store.state.settings.libraryCount = index().length;
+    expandedLibrary.chunks.clear();
+    const count = expandedLibrary.installedCount();
+    if (count !== config.count) throw Error("The downloaded library is incomplete.");
+    store.state.settings.libraryCount = count;
     store.persist();
-    return { count: index().length };
+    return { count };
   });
 }
 app.setName("Icon Studio by Sakib");
@@ -440,6 +433,7 @@ if (!app.requestSingleInstanceLock()) {
       path.join(app.getPath("appData"), "Icon Studio by Sakib"),
     );
     connect();
+    expandedLibrary = new IconLibrary(path.join(__dirname, "library"), () => store.state.settings.rawFolder);
     handlers();
     protocol.handle("iconstudio", (request) => {
       const url = new URL(request.url),

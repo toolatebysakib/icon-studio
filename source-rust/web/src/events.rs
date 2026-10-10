@@ -52,6 +52,7 @@ pub fn action_dispatch(action:&str){
  if let Some(key)=action.strip_prefix("folder:"){let key=key.to_string();spawn_local(async move{match api("chooseFolder",json!({"key":key})).await{Ok(v)=>{change(|a|a.settings=v);render()},Err(e)=>toast(e)}});return}
  if let Some(id)=action.strip_prefix("archive-pool:"){archive_action("pool",id);return}if let Some(id)=action.strip_prefix("archive-timeline:"){archive_action("timeline",id);return}if let Some(id)=action.strip_prefix("archive-reveal:"){archive_action("reveal",id);return}
  match action{
+ "dismiss-announcement"=>{local_set("icon-studio-announcement-expanded-library-2026-10","dismissed");render()},
  "quick"=>{change(|a|{a.modal="quick".into();a.quick_query.clear();});refresh_search(true);if let Some(el)=document().get_element_by_id("quick-input").and_then(|e|e.dyn_into::<HtmlInputElement>().ok()){let _=el.focus();}},
  "close"|"backdrop"=>{change(|a|{a.modal.clear();a.recording=false;});render()},"dismiss"=>{change(|a|a.toast.clear());render()},
  "settings"|"looks"|"project"|"export"=>{change(|a|a.modal=action.into());render()},"archive"=>{change(|a|a.modal="archive".into());load_archive()},

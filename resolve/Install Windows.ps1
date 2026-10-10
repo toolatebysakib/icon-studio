@@ -6,7 +6,9 @@ $utility = [System.IO.Path]::GetFullPath($UtilityFolder)
 New-Item -ItemType Directory -Path $utility -Force | Out-Null
 $target = Join-Path $utility '_IconStudio'
 New-Item -ItemType Directory -Path $target -Force | Out-Null
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Icon Studio.py') -Destination (Join-Path $utility 'Icon Studio.py') -Force
+$rustLauncher=Join-Path $utility "Icon Studio.lua"
+if(Test-Path -LiteralPath $rustLauncher){Move-Item -LiteralPath $rustLauncher -Destination (Join-Path $utility "Icon Studio.lua.rust.bak") -Force}
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot "Icon Studio.py") -Destination (Join-Path $utility 'Icon Studio.py') -Force
 Get-ChildItem -LiteralPath $source | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $target -Recurse -Force }
 Write-Host ('Installed Icon Studio in ' + $utility)
 Write-Host 'Open Resolve > Workspace > Scripts > Utility > Icon Studio.'

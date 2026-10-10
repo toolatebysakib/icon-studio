@@ -17,7 +17,7 @@ export const desktop = window.iconStudioDesktop;
 export const releaseUrl =
   "https://github.com/toolatebysakib/icon-studio/releases/latest/download/icon-studio-resolve.zip";
 export const libraryUrl =
-  "https://github.com/toolatebysakib/icon-studio/releases/latest/download/icon-library.zip";
+  "https://github.com/toolatebysakib/icon-studio/releases/download/v4.0.0/icon-library-rust.zip";
 
 export function LooksPanel({
   looks,

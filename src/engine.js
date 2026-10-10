@@ -1,5 +1,6 @@
 import { backend, library } from "./library";
 import { defaults } from "./model";
+import featured from "./featured.json";
 const NS = "http://www.w3.org/2000/svg";
 const cache = new Map();
 export const dataSvg = (svg) =>
@@ -131,6 +132,9 @@ export async function searchIcons(
   limit = 180,
 ) {
   const q = query.trim().toLowerCase();
+  if (!q && !prefix) return featured.map(id => library.find(icon => icon.fullName === id)).filter(Boolean).slice(0, limit);
+  if (["apple", "brands", "ui"].includes(prefix)) return library.filter(i => !i.isAnimated && i.prefix === prefix && (!q || `${i.title} ${i.name}`.toLowerCase().includes(q))).slice(0, limit);
+  if (prefix === "all") prefix = "";
   if (window.iconStudioDesktop) {
     const offline = await window.iconStudioDesktop
       .searchIcons(q, prefix, limit)
@@ -138,7 +142,7 @@ export async function searchIcons(
     const settings = await window.iconStudioDesktop
       .settings()
       .catch(() => ({}));
-    if (offline.length || settings.libraryCount > 0) return offline;
+    if (offline.length || settings.availableLibraryCount > 0) return offline;
   }
   let local = library.filter(
     (i) =>
