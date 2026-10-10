@@ -28,6 +28,24 @@
     ]
   },
   {
+    "crate": "arbitrary",
+    "version": "1.5.0",
+    "license": "MIT OR Apache-2.0",
+    "authors": [
+      "The Rust-Fuzz Project Developers",
+      "Nick Fitzgerald <fitzgen@gmail.com>",
+      "Manish Goregaokar <manishsmail@gmail.com>",
+      "Simonas Kazlauskas <arbitrary@kazlauskas.me>",
+      "Brian L. Troutwine <brian@troutwine.us>",
+      "Corey Farwell <coreyf@rwell.org>"
+    ],
+    "repository": "https://github.com/rust-fuzz/arbitrary/",
+    "licenseFiles": [
+      "arbitrary-1.5.0-LICENSE-APACHE",
+      "arbitrary-1.5.0-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "ascii",
     "version": "1.1.0",
     "license": "Apache-2.0 OR MIT",
@@ -292,6 +310,19 @@
     ]
   },
   {
+    "crate": "base64ct",
+    "version": "1.8.3",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/formats",
+    "licenseFiles": [
+      "base64ct-1.8.3-LICENSE-APACHE",
+      "base64ct-1.8.3-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "bit-set",
     "version": "0.8.0",
     "license": "Apache-2.0 OR MIT",
@@ -516,6 +547,19 @@
     ]
   },
   {
+    "crate": "const-oid",
+    "version": "0.9.6",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/formats/tree/master/const-oid",
+    "licenseFiles": [
+      "const-oid-0.9.6-LICENSE-APACHE",
+      "const-oid-0.9.6-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "cookie",
     "version": "0.18.2",
     "license": "MIT OR Apache-2.0",
@@ -695,6 +739,30 @@
     ]
   },
   {
+    "crate": "curve25519-dalek",
+    "version": "4.1.3",
+    "license": "BSD-3-Clause",
+    "authors": [
+      "Isis Lovecruft <isis@patternsinthevoid.net>",
+      "Henry de Valence <hdevalence@hdevalence.ca>"
+    ],
+    "repository": "https://github.com/dalek-cryptography/curve25519-dalek/tree/main/curve25519-dalek",
+    "licenseFiles": [
+      "curve25519-dalek-4.1.3-LICENSE"
+    ]
+  },
+  {
+    "crate": "curve25519-dalek-derive",
+    "version": "0.1.1",
+    "license": "MIT/Apache-2.0",
+    "authors": [],
+    "repository": "https://github.com/dalek-cryptography/curve25519-dalek",
+    "licenseFiles": [
+      "curve25519-dalek-derive-0.1.1-LICENSE-APACHE",
+      "curve25519-dalek-derive-0.1.1-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "dbus",
     "version": "0.9.12",
     "license": "Apache-2.0/MIT",
@@ -708,6 +776,19 @@
     ]
   },
   {
+    "crate": "der",
+    "version": "0.7.10",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/formats/tree/master/der",
+    "licenseFiles": [
+      "der-0.7.10-LICENSE-APACHE",
+      "der-0.7.10-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "deranged",
     "version": "0.5.8",
     "license": "MIT OR Apache-2.0",
@@ -718,6 +799,23 @@
     "licenseFiles": [
       "deranged-0.5.8-LICENSE-Apache",
       "deranged-0.5.8-LICENSE-MIT"
+    ]
+  },
+  {
+    "crate": "derive_arbitrary",
+    "version": "1.5.0",
+    "license": "MIT OR Apache-2.0",
+    "authors": [
+      "The Rust-Fuzz Project Developers",
+      "Nick Fitzgerald <fitzgen@gmail.com>",
+      "Manish Goregaokar <manishsmail@gmail.com>",
+      "Andre Bogus <bogusandre@gmail.com>",
+      "Corey Farwell <coreyf@rwell.org>"
+    ],
+    "repository": "https://github.com/rust-fuzz/arbitrary",
+    "licenseFiles": [
+      "derive_arbitrary-1.5.0-LICENSE-APACHE",
+      "derive_arbitrary-1.5.0-LICENSE-MIT"
     ]
   },
   {
@@ -944,6 +1042,33 @@
     ]
   },
   {
+    "crate": "ed25519",
+    "version": "2.2.3",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/signatures/tree/master/ed25519",
+    "licenseFiles": [
+      "ed25519-2.2.3-LICENSE-APACHE",
+      "ed25519-2.2.3-LICENSE-MIT"
+    ]
+  },
+  {
+    "crate": "ed25519-dalek",
+    "version": "2.2.0",
+    "license": "BSD-3-Clause",
+    "authors": [
+      "isis lovecruft <isis@patternsinthevoid.net>",
+      "Tony Arcieri <bascule@gmail.com>",
+      "Michael Rosenberg <michael@mrosenberg.pub>"
+    ],
+    "repository": "https://github.com/dalek-cryptography/curve25519-dalek/tree/main/ed25519-dalek",
+    "licenseFiles": [
+      "ed25519-dalek-2.2.0-LICENSE"
+    ]
+  },
+  {
     "crate": "endi",
     "version": "1.1.1",
     "license": "MIT",
@@ -1049,6 +1174,20 @@
     ]
   },
   {
+    "crate": "fiat-crypto",
+    "version": "0.2.9",
+    "license": "MIT OR Apache-2.0 OR BSD-1-Clause",
+    "authors": [
+      "Fiat Crypto library authors <jgross@mit.edu>"
+    ],
+    "repository": "https://github.com/mit-plv/fiat-crypto",
+    "licenseFiles": [
+      "fiat-crypto-0.2.9-LICENSE-APACHE",
+      "fiat-crypto-0.2.9-LICENSE-BSD-1",
+      "fiat-crypto-0.2.9-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "field-offset",
     "version": "0.3.6",
     "license": "MIT OR Apache-2.0",
@@ -1148,6 +1287,19 @@
     "licenseFiles": [
       "form_urlencoded-1.2.2-LICENSE-APACHE",
       "form_urlencoded-1.2.2-LICENSE-MIT"
+    ]
+  },
+  {
+    "crate": "fs2",
+    "version": "0.4.3",
+    "license": "MIT/Apache-2.0",
+    "authors": [
+      "Dan Burkert <dan@danburkert.com>"
+    ],
+    "repository": "https://github.com/danburkert/fs2-rs",
+    "licenseFiles": [
+      "fs2-0.4.3-LICENSE-APACHE",
+      "fs2-0.4.3-LICENSE-MIT"
     ]
   },
   {
@@ -2464,6 +2616,19 @@
     ]
   },
   {
+    "crate": "pkcs8",
+    "version": "0.10.2",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/formats/tree/master/pkcs8",
+    "licenseFiles": [
+      "pkcs8-0.10.2-LICENSE-APACHE",
+      "pkcs8-0.10.2-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "pkg-config",
     "version": "0.3.34",
     "license": "MIT OR Apache-2.0",
@@ -2698,6 +2863,20 @@
     "licenseFiles": [
       "rand_chacha-0.9.0-LICENSE-APACHE",
       "rand_chacha-0.9.0-LICENSE-MIT"
+    ]
+  },
+  {
+    "crate": "rand_core",
+    "version": "0.6.4",
+    "license": "MIT OR Apache-2.0",
+    "authors": [
+      "The Rand Project Developers",
+      "The Rust Project Developers"
+    ],
+    "repository": "https://github.com/rust-random/rand",
+    "licenseFiles": [
+      "rand_core-0.6.4-LICENSE-APACHE",
+      "rand_core-0.6.4-LICENSE-MIT"
     ]
   },
   {
@@ -3118,6 +3297,19 @@
     ]
   },
   {
+    "crate": "signature",
+    "version": "2.2.0",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/traits/tree/master/signature",
+    "licenseFiles": [
+      "signature-2.2.0-LICENSE-APACHE",
+      "signature-2.2.0-LICENSE-MIT"
+    ]
+  },
+  {
     "crate": "simd-adler32",
     "version": "0.3.10",
     "license": "MIT",
@@ -3188,6 +3380,19 @@
     "repository": "https://gitlab.gnome.org/World/Rust/soup3-rs",
     "licenseFiles": [
       "soup3-sys-0.5.0-LICENSE"
+    ]
+  },
+  {
+    "crate": "spki",
+    "version": "0.7.3",
+    "license": "Apache-2.0 OR MIT",
+    "authors": [
+      "RustCrypto Developers"
+    ],
+    "repository": "https://github.com/RustCrypto/formats/tree/master/spki",
+    "licenseFiles": [
+      "spki-0.7.3-LICENSE-APACHE",
+      "spki-0.7.3-LICENSE-MIT"
     ]
   },
   {
@@ -4890,6 +5095,21 @@
     ]
   },
   {
+    "crate": "zip",
+    "version": "2.4.2",
+    "license": "MIT",
+    "authors": [
+      "Mathijs van de Nes <git@mathijs.vd-nes.nl>",
+      "Marli Frost <marli@frost.red>",
+      "Ryan Levick <ryan.levick@gmail.com>",
+      "Chris Hennick <hennickc@amazon.com>"
+    ],
+    "repository": "https://github.com/zip-rs/zip2.git",
+    "licenseFiles": [
+      "zip-2.4.2-LICENSE"
+    ]
+  },
+  {
     "crate": "zlib-rs",
     "version": "0.6.8",
     "license": "Zlib",
@@ -4909,6 +5129,16 @@
     "repository": "https://github.com/dtolnay/zmij",
     "licenseFiles": [
       "zmij-1.0.23-LICENSE-MIT"
+    ]
+  },
+  {
+    "crate": "zopfli",
+    "version": "0.8.3",
+    "license": "Apache-2.0",
+    "authors": [],
+    "repository": "https://github.com/zopfli-rs/zopfli",
+    "licenseFiles": [
+      "zopfli-0.8.3-COPYING"
     ]
   },
   {

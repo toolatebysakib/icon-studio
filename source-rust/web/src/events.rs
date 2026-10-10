@@ -52,7 +52,12 @@ pub fn action_dispatch(action:&str){
  if let Some(key)=action.strip_prefix("folder:"){let key=key.to_string();spawn_local(async move{match api("chooseFolder",json!({"key":key})).await{Ok(v)=>{change(|a|a.settings=v);render()},Err(e)=>toast(e)}});return}
  if let Some(id)=action.strip_prefix("archive-pool:"){archive_action("pool",id);return}if let Some(id)=action.strip_prefix("archive-timeline:"){archive_action("timeline",id);return}if let Some(id)=action.strip_prefix("archive-reveal:"){archive_action("reveal",id);return}
  match action{
- "dismiss-announcement"=>{local_set("icon-studio-announcement-expanded-library-2026-10","dismissed");render()},
+ "dismiss-announcement"=>{local_set("icon-studio-announcement-expanded-library-2026-10","dismissed");persist_preferences();render()},
+ "check-updates"=>check_updates(true),
+ "update-later"=>{change(|a|a.settings["updateNotice"]=json!(false));render()},
+ "connect-resolve"=>{spawn_local(async{match api("connectResolve",json!({})).await{Ok(v)=>toast(text(&v,"message")),Err(e)=>toast(e)}})},
+ "download-library-full"=>{if with(|a|a.busy){return}change(|a|a.busy=true);toast("Downloading the library…");spawn_local(async{match api("downloadFullLibrary",json!({})).await{Ok(v)=>{change(|a|{a.settings["libraryCount"]=v["count"].clone();a.busy=false;});toast("Expanded library installed");},Err(e)=>{change(|a|a.busy=false);toast(e)}}});},
+ "update-app"|"update-editor"=>{if with(|a|a.busy){return}let method=if action=="update-app"{"updateApp"}else{"updateEditor"};change(|a|a.busy=true);render();spawn_local(async move{let(id,items)=with(|a|(a.project["id"].clone(),a.items.clone()));let result=async{api("saveWorkspace",json!({"id":id,"workspace":{"version":2,"items":items}})).await?;api(method,json!({})).await}.await;if let Err(e)=result{change(|a|a.busy=false);toast(e)}});},
  "quick"=>{change(|a|{a.modal="quick".into();a.quick_query.clear();});refresh_search(true);if let Some(el)=document().get_element_by_id("quick-input").and_then(|e|e.dyn_into::<HtmlInputElement>().ok()){let _=el.focus();}},
  "close"|"backdrop"=>{change(|a|{a.modal.clear();a.recording=false;});render()},"dismiss"=>{change(|a|a.toast.clear());render()},
  "settings"|"looks"|"project"|"export"=>{change(|a|a.modal=action.into());render()},"archive"=>{change(|a|a.modal="archive".into());load_archive()},
@@ -100,6 +105,8 @@ fn export_batch(kind:String){if with(|a|a.busy){return}selected_or_active();let(
 fn load_archive(){let id=with(|a|a.archive_project.clone());spawn_local(async move{match api("archiveList",json!({"id":id})).await{Ok(v)=>{change(|a|a.archive=v);render()},Err(e)=>toast(e)}});}
 fn archive_action(kind:&str,id:&str){let kind=kind.to_string();let id=id.to_string();spawn_local(async move{if let Err(e)=api(&kind,json!({"id":id,"expectedProjectId":with(|a|a.project["id"].clone())})).await{toast(e)}});}
 pub async fn sync_project()->Result<(),String>{
- let ctx=api("context",json!({})).await?;let project=ctx["project"].clone();if with(|a|a.project["id"]==project["id"]){return Ok(())}
+ let ctx=api("context",json!({})).await?;let project=ctx["project"].clone();let changed=change(|a|{let changed=a.settings["resolveConnected"]!=ctx["connected"];a.settings["resolveConnected"]=ctx["connected"].clone();changed});if changed{render()}if with(|a|a.project["id"]==project["id"]){return Ok(())}
  let workspace=ctx["workspace"].clone();let items=if workspace.is_object(){validate_project(&workspace).unwrap_or_default()}else{vec![]};change(|a|{a.project=project;a.items=items;a.active=0;a.selected.clear();a.undo.clear();a.redo.clear();if a.items.is_empty(){let svg=a.starter.get("apple:photos").or_else(||a.starter.values().next()).cloned().unwrap_or("<svg viewBox='0 0 24 24'><path d='m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z'/></svg>".into());let style=if ctx["look"]["style"].is_object(){clean_style(&ctx["look"]["style"])}else{defaults()};a.items.push(Item::new(uuid(),"photos".into(),svg,"".into(),style));}});render();Ok(())
 }
+
+pub fn check_updates(manual:bool){spawn_local(async move{match api("checkUpdates",json!({})).await{Ok(v)=>{change(|a|{let available=flag(&v,"appAvailable")||flag(&v,"editorAvailable");a.settings["updateNotice"]=json!(available);a.settings["updates"]=v;a.settings["updateStatus"]=json!(if available{"Update available"}else{"You’re up to date"});});render();},Err(e)=>{if manual{toast(format!("Could not check for updates: {e}"))}}}});}

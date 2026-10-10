@@ -1,4 +1,4 @@
-param([switch]$Desktop,[switch]$Web,[switch]$Tests)
+param([switch]$Desktop,[switch]$App,[switch]$Web,[switch]$Tests)
 $ErrorActionPreference='Stop'
 $workspace=Split-Path -Parent $PSScriptRoot
 $env:CARGO_HOME=Join-Path $workspace 'toolchain/cargo'
@@ -18,4 +18,5 @@ try {
   }
  }
  if($Desktop){cargo build -p icon-studio-desktop --release; if($LASTEXITCODE){throw 'Desktop build failed'}}
+ if($App){$env:CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS='-C link-self-contained=no'; cargo build -p icon-studio-app --release; if($LASTEXITCODE){throw 'App build failed'}}
 } finally {Pop-Location}

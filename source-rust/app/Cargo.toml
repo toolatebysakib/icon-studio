@@ -1,0 +1,29 @@
+[package]
+name = "icon-studio-app"
+version = "5.0.0"
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "IconStudioApp"
+path = "src/main.rs"
+
+[dependencies]
+icon-studio-core = { path = "../core" }
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+base64 = "0.22"
+sha2 = "0.10"
+uuid = { version = "1", features = ["v4"] }
+tiny_http = "0.12"
+wry = "0.57"
+tao = "0.37"
+rfd = "0.15"
+drag = "2.1"
+ureq = { version = "3", features = ["json"] }
+open = "5"
+
+
+ed25519-dalek = "2.2"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+fs2 = "0.4"

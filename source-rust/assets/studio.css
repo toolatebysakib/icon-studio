@@ -15,3 +15,5 @@
 .announcement-download{display:flex;align-items:center;gap:6px;padding:7px 9px;margin-top:11px;border:1px solid rgba(133,105,218,.2);border-radius:8px;background:#eee7fc;color:#6246a5;font-size:11px;font-weight:600;cursor:pointer}.announcement-download:disabled{opacity:.65;cursor:progress}
 [data-theme="dark"] .library-announcement{background:#25222e;color:#f1ecff;border-color:#554663;box-shadow:0 8px 34px #0005}[data-theme="dark"] .announcement-copy p{color:#b8adc9}[data-theme="dark"] .announcement-eyebrow{color:#c2a7f9}[data-theme="dark"] .announcement-download{background:#383044;color:#d4b8ff;border-color:#584266}
 @media(max-width:600px){.library-announcement{right:10px;bottom:10px;width:min(300px,calc(100vw - 20px));padding:14px 30px 14px 13px}}
+
+.update-announcement{z-index:36}.announcement-download .label{display:inline!important}.announcement-download .symbol{width:14px;height:14px}

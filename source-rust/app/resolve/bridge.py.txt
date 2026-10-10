@@ -1,0 +1,184 @@
+"""Resolve-internal bridge. No external scripting preference changes are required."""
+import json, os, sys, socket, threading, queue, secrets, subprocess, time, math
+from pathlib import Path
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+def timecode_frames(code, rate):
+    parts=[int(part) for part in code.replace(';',':').split(':')]
+    fps=round(float(rate))
+    frame=((parts[0]*3600+parts[1]*60+parts[2])*fps)+parts[3]
+    if ';' in code and fps in (30,60):
+        minutes=parts[0]*60+parts[1]
+        frame-=(4 if fps==60 else 2)*(minutes-minutes//10)
+    return frame
+
+def request(resolve, method, args):
+    project=resolve.GetProjectManager().GetCurrentProject()
+    if method=='context': return {'project':{'id':project.GetUniqueId(),'name':project.GetName()} if project else None,'connected':True}
+    if method not in ('insert','batch'): raise ValueError('Unknown operation')
+    if project is None: raise ValueError('Open a Resolve project first.')
+    if project.GetUniqueId()!=args.get('expectedProjectId'): raise ValueError('Resolve project changed.')
+    if method=='batch':
+        files=args.get('files',[])
+        if not isinstance(files,list) or not 1<=len(files)<=200: raise ValueError('Select up to 200 icons.')
+        paths=[Path(file) for file in files]
+        if any(not file.is_absolute() or file.suffix.lower()!='.png' or not file.is_file() for file in paths): raise ValueError('Choose existing generated PNG files.')
+        pool=project.GetMediaPool()
+        clips=pool.ImportMedia([{'FilePath':str(file)} for file in paths])
+        if not clips: clips=pool.ImportMedia([str(file) for file in paths])
+        if not clips: raise ValueError('Resolve could not import these PNGs.')
+        return {'imported':len(clips)}
+    file=Path(args['file'])
+    if not file.is_absolute() or file.suffix.lower()!='.png' or not file.is_file(): raise ValueError('Choose an existing PNG file.')
+    pool=project.GetMediaPool()
+    clips=pool.ImportMedia([{'FilePath':str(file)}])
+    if not clips: clips=pool.ImportMedia([str(file)])
+    if not clips: raise ValueError('Resolve could not import this PNG.')
+    if args['kind']=='pool': return {'imported':len(clips)}
+    if args['kind']!='timeline': raise ValueError('Invalid operation')
+    timeline=project.GetCurrentTimeline()
+    if timeline is None: raise ValueError('Open a timeline first. The icon is in the Media Pool.')
+    options=args['options']
+    settings=timeline.GetSettings() if hasattr(timeline,'GetSettings') else {}
+    fps=float(settings.get('timelineFrameRate') or project.GetSetting('timelineFrameRate') or 24)
+    frame=timeline.GetEndFrame() if options.get('trackMode')=='manual' and options.get('position')=='end' else timecode_frames(timeline.GetCurrentTimecode(),fps)
+    duration=max(1,round(max(.1,min(3600,float(options.get('duration',5))))*fps))
+    if options.get('trackMode')!='manual': return automatic_insert(timeline,pool,clips[0],frame,duration)
+    track=max(1,min(99,int(options.get('track',2))))
+    while timeline.GetTrackCount('video')<track:
+        if not timeline.AddTrack('video'): raise ValueError('Resolve could not add the target track.')
+    if timeline.GetIsTrackLocked('video',track): raise ValueError('The target video track is locked.')
+    added=pool.AppendToTimeline([{'mediaPoolItem':clips[0],'startFrame':0,'endFrame':duration-1,'mediaType':1,'trackIndex':track,'recordFrame':frame}])
+    if not added: raise ValueError('Resolve could not add the icon to the timeline.')
+    return {'imported':1,'added':len(added),'recordFrame':frame}
+
+def snapshot_tracks(timeline):
+    tracks=[]
+    for index in range(1,timeline.GetTrackCount('video')+1):
+        ranges=[]
+        for item in timeline.GetItemListInTrack('video',index) or []:
+            start,end=float(item.GetStart()),float(item.GetEnd())
+            if not math.isfinite(start) or not math.isfinite(end) or end<start:
+                raise ValueError("Resolve could not read a video clip's timeline range.")
+            ranges.append({'start':start,'end':end})
+        tracks.append({'index':index,'ranges':ranges,'locked':bool(timeline.GetIsTrackLocked('video',index)),'enabled':timeline.GetIsTrackEnabled('video',index) is not False})
+    return tracks
+
+def choose_track(tracks,frame,duration):
+    end=frame+duration
+    highest=max((track['index'] for track in tracks if any(clip['start']<end and clip['end']>frame for clip in track['ranges'])),default=0)
+    return next((track['index'] for track in tracks if track['index']>highest and not track['locked'] and track['enabled']),len(tracks)+1)
+
+def append_icon(pool,clip,frame,duration,track):
+    return pool.AppendToTimeline([{'mediaPoolItem':clip,'startFrame':0,'endFrame':duration-1,'mediaType':1,'trackIndex':track,'recordFrame':frame}])
+
+def automatic_insert(timeline,pool,clip,frame,requested_duration):
+    original_timecode=timeline.GetCurrentTimecode()
+    tracks=snapshot_tracks(timeline);staging_track=len(tracks)+1
+    if not timeline.AddTrack('video'): raise ValueError('Resolve could not create a video track.')
+    # Measure the actual still length safely; Resolve can ignore PNG source ranges.
+    try:
+        staged=append_icon(pool,clip,frame,requested_duration,staging_track)
+        if not staged: raise ValueError('Resolve could not place the icon. It is in the Media Pool.')
+        duration=float(staged[0].GetDuration())
+        if not math.isfinite(duration) or duration<=0:
+            timeline.DeleteClips(staged,False)
+            raise ValueError("Resolve could not determine the icon's duration.")
+        track=choose_track(tracks,frame,duration)
+        def result(items,index): return {'imported':1,'added':len(items),'recordFrame':frame,'trackIndex':index,'duration':duration}
+        if track==staging_track: return result(staged,track)
+        placed=append_icon(pool,clip,frame,duration,track)
+        if not placed: return result(staged,staging_track)
+        if not timeline.DeleteClips(staged,False):
+            timeline.DeleteClips(placed,False)
+            return result(staged,staging_track)
+        return result(placed,track)
+    finally:
+        try:
+            if not (timeline.GetItemListInTrack('video',staging_track) or []): timeline.DeleteTrack('video',staging_track)
+        finally:
+            timeline.SetCurrentTimecode(original_timecode)
+
+
+
+def launch(resolve):
+    if sys.platform == 'win32':
+        data = Path(os.environ.get('APPDATA', str(Path.home()/'AppData/Roaming'))) / 'Icon Studio App by Sakib'
+        default_app = Path(os.environ.get('LOCALAPPDATA', str(Path.home()/'AppData/Local'))) / 'Programs/Icon Studio/IconStudioApp.exe'
+        try:
+            import winreg
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Sakib\IconStudioApp') as key:
+                default_app = Path(winreg.QueryValueEx(key, 'InstallLocation')[0])/'IconStudioApp.exe'
+        except OSError:
+            pass
+    else:
+        data = Path.home()/'Library/Application Support/Icon Studio App by Sakib'
+        candidates = [Path.home()/'Applications/Icon Studio.app/Contents/MacOS/IconStudioApp', Path('/Applications/Icon Studio.app/Contents/MacOS/IconStudioApp')]
+        default_app = next((p for p in candidates if p.is_file()), candidates[0])
+    if not default_app.is_file():
+        raise RuntimeError('Install the Icon Studio desktop app first from iconeditor.pages.dev.')
+    data.mkdir(parents=True, exist_ok=True)
+    endpoint_file = data/'resolve-bridge.json'
+    token = secrets.token_urlsafe(32)
+    tasks = queue.Queue()
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+        def do_POST(self):
+            if self.headers.get('Authorization') != 'Bearer '+token:
+                self.send_error(403); return
+            origin = self.headers.get('Origin')
+            if origin:
+                self.send_error(403); return
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 1 <= length <= 100000:
+                    raise ValueError('Invalid request size')
+                payload = json.loads(self.rfile.read(length))
+                done = queue.Queue(1)
+                tasks.put((payload, done))
+                result = done.get(timeout=28)
+            except Exception as error:
+                result = {'ok':False, 'error':str(error)}
+            content = json.dumps(result).encode()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+    server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+    server.daemon_threads = True
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    temporary = data/('resolve-bridge.'+token+'.tmp')
+    temporary.write_text(json.dumps({'url':'http://127.0.0.1:'+str(server.server_port), 'token':token, 'pid':os.getpid()}), encoding='utf-8')
+    os.replace(temporary, endpoint_file)
+    flags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+    subprocess.Popen([str(default_app)], creationflags=flags)
+    try:
+        # SDK calls remain on the Resolve script thread, exactly as in the previous connector.
+        # The desktop app may close/reopen/update without terminating this connection.
+        while True:
+            try:
+                payload, done = tasks.get(timeout=.1)
+            except queue.Empty:
+                try:
+                    latest = json.loads(endpoint_file.read_text(encoding='utf-8'))
+                    if latest.get('token') != token:
+                        break
+                except OSError:
+                    break
+                continue
+            try:
+                result = request(resolve, payload.get('method'), payload.get('args', {}))
+                done.put({'ok':True, 'result':result})
+            except Exception as error:
+                done.put({'ok':False, 'error':str(error)})
+    finally:
+        server.shutdown()
+        server.server_close()
+        try:
+            latest = json.loads(endpoint_file.read_text(encoding='utf-8'))
+            if latest.get('token') == token:
+                endpoint_file.unlink()
+        except (OSError, ValueError):
+            pass
