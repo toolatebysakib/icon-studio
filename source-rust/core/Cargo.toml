@@ -1,0 +1,15 @@
+[package]
+name = "icon-studio-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+regex = "1"
+roxmltree = "0.20"
+flate2 = { version = "1", default-features = false, features = ["rust_backend"] }
+base64 = "0.22"
+crc32fast = "1"
+

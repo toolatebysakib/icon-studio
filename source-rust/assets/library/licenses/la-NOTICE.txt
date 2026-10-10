@@ -1,0 +1,24 @@
+Line Awesome (la)
+Author: Icons8
+Source: https://github.com/icons8/line-awesome
+Declared license: Apache-2.0
+License reference: https://www.apache.org/licenses/LICENSE-2.0
+
+Upstream notice retrieved from https://raw.githubusercontent.com/icons8/line-awesome/master/LICENSE.md
+
+# Good Boy License
+
+We’ve released the icon pack under either MIT or the [Good Boy License](http://icons8.com/good-boy-license/). We invented it. Please do _whatever your mom would approve of:_
+
+## Permitted Use
+
+* Download in any format
+* Change
+* Fork
+
+## Prohibited Use
+
+* No tattoos
+* No touching with unwashed hands
+* No exchanging for drugs.
+

@@ -1,0 +1,1179 @@
+Icon Studio library
+
+Each collection retains its own license. Collection content is distributed separately from the MIT-licensed application.
+
+Academicons (academicons)
+Author: James Walsh
+Source: https://github.com/jpswalsh/academicons
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Akar Icons (akar-icons)
+Author: Arturo Wibawa
+Source: https://github.com/artcoholic/akar-icons
+License: MIT — https://github.com/artcoholic/akar-icons/blob/master/LICENSE
+
+Ant Design Icons (ant-design)
+Author: HeskeyBaozi
+Source: https://github.com/ant-design/ant-design-icons
+License: MIT — https://github.com/ant-design/ant-design-icons/blob/master/LICENSE
+
+Arcticons (arcticons)
+Author: Donnnno
+Source: https://github.com/Arcticons-Team/Arcticons
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+@icons (at-icons)
+Author: Valentin Fossati
+Source: https://github.com/Voxybuns/at-icons
+License: MIT — https://github.com/Voxybuns/at-icons/blob/main/LICENSE
+
+Basil (basil)
+Author: Craftwork
+Source: https://www.figma.com/community/file/931906394678748246
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Bootstrap Icons (bi)
+Author: The Bootstrap Authors
+Source: https://github.com/twbs/icons
+License: MIT — https://github.com/twbs/icons/blob/main/LICENSE.md
+
+Bitcoin Icons (bitcoin-icons)
+Author: Bitcoin Design Community
+Source: https://github.com/BitcoinDesign/Bitcoin-Icons
+License: MIT — https://github.com/BitcoinDesign/Bitcoin-Icons/blob/main/LICENSE-MIT
+
+Boxicons (boxicons)
+Author: Boxicons
+Source: https://github.com/box-icons/boxicons-core
+License: MIT — https://github.com/box-icons/boxicons-core/blob/main/LICENSE
+
+BPMN (bpmn)
+Author: Camunda Services GmbH
+Source: https://github.com/bpmn-io/bpmn-font
+License: Open Font License — https://github.com/bpmn-io/bpmn-font/blob/master/LICENSE
+
+Brandico (brandico)
+Author: Fontello
+Source: https://github.com/fontello/brandico.font
+License: CC BY SA — https://creativecommons.org/licenses/by-sa/3.0/
+
+BoxIcons v2 (bx)
+Author: Boxicons
+Source: https://github.com/box-icons/boxicons
+License: MIT — https://github.com/box-icons/boxicons/blob/main/LICENSE
+
+Boxicons Brands (bxl)
+Author: Boxicons
+Source: https://github.com/box-icons/boxicons-core
+License: MIT — https://github.com/box-icons/boxicons-core/blob/main/LICENSE
+
+BoxIcons v2 Solid (bxs)
+Author: Boxicons
+Source: https://github.com/box-icons/boxicons
+License: MIT — https://github.com/box-icons/boxicons/blob/main/LICENSE
+
+Bytesize Icons (bytesize)
+Author: Dan Klammer
+Source: https://github.com/danklammer/bytesize-icons
+License: MIT — https://github.com/danklammer/bytesize-icons/blob/master/LICENSE.md
+
+Carbon (carbon)
+Author: IBM
+Source: https://github.com/carbon-design-system/carbon/tree/main/packages/icons
+License: Apache 2.0 — 
+
+Catppuccin Icons (catppuccin)
+Author: Catppuccin
+Source: https://github.com/catppuccin/vscode-icons
+License: MIT — https://github.com/catppuccin/vscode-icons/blob/main/LICENSE
+
+Charm Icons (charm)
+Author: Jay Newey
+Source: https://github.com/jaynewey/charm-icons
+License: MIT — https://github.com/jaynewey/charm-icons/blob/main/LICENSE
+
+coolicons (ci)
+Author: Kryston Schwarze
+Source: https://github.com/krystonschwarze/coolicons
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+CoreUI Brands (cib)
+Author: creativeLabs Łukasz Holeczek
+Source: https://github.com/coreui/coreui-icons
+License: CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+CoreUI Flags (cif)
+Author: creativeLabs Łukasz Holeczek
+Source: https://github.com/coreui/coreui-icons
+License: CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+CoreUI Free (cil)
+Author: creativeLabs Łukasz Holeczek
+Source: https://github.com/coreui/coreui-icons
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Circle Flags (circle-flags)
+Author: HatScripts
+Source: https://github.com/HatScripts/circle-flags
+License: MIT — https://github.com/HatScripts/circle-flags/blob/gh-pages/LICENSE
+
+Circum Icons (circum)
+Author: Klarr Agency
+Source: https://github.com/Klarr-Agency/Circum-Icons
+License: Mozilla Public License 2.0 — https://github.com/Klarr-Agency/Circum-Icons/blob/main/LICENSE
+
+Clarity (clarity)
+Author: VMware
+Source: https://github.com/vmware/clarity
+License: MIT — https://github.com/vmware/clarity-assets/blob/master/LICENSE
+
+CodeX Icons (codex)
+Author: CodeX
+Source: https://github.com/codex-team/icons
+License: MIT — https://github.com/codex-team/icons/blob/master/LICENSE
+
+Codicons (codicon)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/vscode-codicons
+License: CC BY 4.0 — https://github.com/microsoft/vscode-codicons/blob/main/LICENSE
+
+Covid Icons (covid)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Cryptocurrency Icons (cryptocurrency)
+Author: Christopher Downer
+Source: https://github.com/atomiclabs/cryptocurrency-icons
+License: CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+Cryptocurrency Color Icons (cryptocurrency-color)
+Author: Christopher Downer
+Source: https://github.com/atomiclabs/cryptocurrency-icons
+License: CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+Cuida Icons (cuida)
+Author: Sysvale
+Source: https://github.com/Sysvale/cuida-icons
+License: Apache 2.0 — https://github.com/Sysvale/cuida-icons/blob/main/LICENSE
+
+Dashicons (dashicons)
+Author: WordPress
+Source: https://github.com/WordPress/dashicons
+License: GPL — https://github.com/WordPress/dashicons/blob/master/gpl.txt
+
+Devicon (devicon)
+Author: konpa
+Source: https://github.com/devicons/devicon/tree/master
+License: MIT — https://github.com/devicons/devicon/blob/master/LICENSE
+
+Devicon Plain (devicon-plain)
+Author: konpa
+Source: https://github.com/devicons/devicon/tree/master
+License: MIT — https://github.com/devicons/devicon/blob/master/LICENSE
+
+Dinkie Icons (dinkie-icons)
+Author: atelierAnchor
+Source: https://github.com/atelier-anchor/dinkie-icons
+License: MIT — https://github.com/atelier-anchor/dinkie-icons/blob/main/LICENSE
+
+Duoicons (duo-icons)
+Author: fernandcf
+Source: https://github.com/fazdiu/duo-icons
+License: MIT — https://github.com/fazdiu/duo-icons/blob/master/LICENSE
+
+Evil Icons (ei)
+Author: Alexander Madyankin and Roman Shamin
+Source: https://github.com/evil-icons/evil-icons
+License: MIT — https://github.com/evil-icons/evil-icons/blob/master/LICENSE.txt
+
+Elusive Icons (el)
+Author: Team Redux
+Source: https://github.com/dovy/elusive-icons
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Emoji One (Colored) (emojione)
+Author: Emoji One
+Source: https://github.com/EmojiTwo/emojitwo
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Emoji One (Monotone) (emojione-monotone)
+Author: Emoji One
+Source: https://github.com/EmojiTwo/emojitwo
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Emoji One (v1) (emojione-v1)
+Author: Emoji One
+Source: https://github.com/joypixels/emojione-legacy
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+Energy Icons (energy-icons)
+Author: Sam Passmore
+Source: https://github.com/Sam-r-passmore/energy-icons
+License: MIT — https://github.com/Sam-r-passmore/energy-icons/blob/main/LICENSE
+
+Entypo+ (entypo)
+Author: Daniel Bruce
+Source: https://github.com/chancancode/entypo-plus
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+Entypo+ Social (entypo-social)
+Author: Daniel Bruce
+Source: https://github.com/chancancode/entypo-plus
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+Element Plus (ep)
+Author: Element Plus
+Source: https://github.com/element-plus/element-plus-icons
+License: MIT — https://github.com/element-plus/element-plus-icons/blob/main/packages/svg/package.json
+
+Elegant (et)
+Author: Kenny Sing
+Source: https://github.com/pprince/etlinefont-bower
+License: GPL 3.0 — https://www.gnu.org/licenses/gpl.html
+
+Eva Icons (eva)
+Author: Akveo
+Source: https://github.com/akveo/eva-icons/
+License: MIT — https://github.com/akveo/eva-icons/blob/master/LICENSE.txt
+
+Framework7 Icons (f7)
+Author: Vladimir Kharlampidi
+Source: https://github.com/framework7io/framework7-icons
+License: MIT — https://github.com/framework7io/framework7-icons/blob/master/LICENSE
+
+Font Awesome 4 (fa)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome/tree/fa-4
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Font Awesome 5 Brands (fa-brands)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome 5 Regular (fa-regular)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome 5 Solid (fa-solid)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome 6 Brands (fa6-brands)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome 6 Regular (fa6-regular)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome 6 Solid (fa6-solid)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome Brands (fa7-brands)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome Regular (fa7-regular)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Font Awesome Solid (fa7-solid)
+Author: Dave Gandy
+Source: https://github.com/FortAwesome/Font-Awesome
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+FontAudio (fad)
+Author: @fefanto
+Source: https://github.com/fefanto/fontaudio
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Famicons (famicons)
+Author: Family
+Source: https://github.com/familyjs/famicons
+License: MIT — https://github.com/familyjs/famicons/blob/main/LICENSE
+
+Feather Icon (fe)
+Author: Megumi Hano
+Source: https://github.com/feathericon/feathericon
+License: MIT — https://github.com/feathericon/feathericon/blob/master/LICENSE
+
+Feather Icons (feather)
+Author: Cole Bemis
+Source: https://github.com/feathericons/feather
+License: MIT — https://github.com/feathericons/feather/blob/master/LICENSE
+
+File Icons (file-icons)
+Author: John Gardner
+Source: https://github.com/file-icons/icons
+License: ISC — https://github.com/file-icons/icons/blob/master/LICENSE.md
+
+Flag Icons (flag)
+Author: Panayiotis Lipiridis
+Source: https://github.com/lipis/flag-icons
+License: MIT — https://github.com/lipis/flag-icons/blob/main/LICENSE
+
+Flagpack (flagpack)
+Author: Yummygum
+Source: https://github.com/Yummygum/flagpack-core
+License: MIT — https://github.com/Yummygum/flagpack-core/blob/main/LICENSE
+
+Flat Color Icons (flat-color-icons)
+Author: Icons8
+Source: https://github.com/icons8/flat-Color-icons
+License: MIT — 
+
+Flat UI Icons (flat-ui)
+Author: Designmodo, Inc.
+Source: https://github.com/designmodo/Flat-UI
+License: MIT — https://github.com/designmodo/Flat-UI/blob/master/LICENSE
+
+Flowbite Icons (flowbite)
+Author: Themesberg
+Source: https://github.com/themesberg/flowbite-icons
+License: MIT — https://github.com/themesberg/flowbite-icons/blob/main/LICENSE
+
+Fluent UI System Icons (fluent)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/fluentui-system-icons
+License: MIT — https://github.com/microsoft/fluentui-system-icons/blob/main/LICENSE
+
+Fluent UI System Color Icons (fluent-color)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/fluentui-system-icons
+License: MIT — https://github.com/microsoft/fluentui-system-icons/blob/main/LICENSE
+
+Fluent Emoji (fluent-emoji)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/fluentui-emoji
+License: MIT — https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE
+
+Fluent Emoji Flat (fluent-emoji-flat)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/fluentui-emoji
+License: MIT — https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE
+
+Fluent Emoji High Contrast (fluent-emoji-high-contrast)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/fluentui-emoji
+License: MIT — https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE
+
+Fluent UI MDL2 (fluent-mdl2)
+Author: Microsoft Corporation
+Source: https://github.com/microsoft/fluentui/tree/master/packages/react-icons-mdl2
+License: MIT — https://github.com/microsoft/fluentui/blob/master/packages/react-icons-mdl2/LICENSE
+
+Fontelico (fontelico)
+Author: Fontello
+Source: https://github.com/fontello/fontelico.font
+License: CC BY SA — https://creativecommons.org/licenses/by-sa/3.0/
+
+Fontisto (fontisto)
+Author: Kenan Gündoğan
+Source: https://github.com/kenangundogan/fontisto
+License: MIT — https://github.com/kenangundogan/fontisto/blob/master/LICENSE
+
+FormKit Icons (formkit)
+Author: FormKit, Inc
+Source: https://github.com/formkit/formkit/tree/master/packages/icons
+License: MIT — https://github.com/formkit/formkit/blob/master/packages/icons/LICENSE
+
+Foundation (foundation)
+Author: Zurb
+Source: https://github.com/zurb/foundation-icon-fonts
+License: MIT — 
+
+Firefox OS Emoji (fxemoji)
+Author: Mozilla
+Source: https://github.com/mozilla/fxemoji
+License: Apache 2.0 — https://mozilla.github.io/fxemoji/LICENSE.md
+
+Gala Icons (gala)
+Author: Jake Wells
+Source: https://github.com/cyberalien/gala-icons
+License: GPL — https://github.com/cyberalien/gala-icons/blob/main/LICENSE
+
+Game Icons (game-icons)
+Author: GameIcons
+Source: https://github.com/game-icons/icons
+License: CC BY 3.0 — https://github.com/game-icons/icons/blob/master/license.txt
+
+Garden SVG Icons (garden)
+Author: Zendesk
+Source: https://github.com/zendeskgarden/svg-icons
+License: Apache 2.0 — https://github.com/zendeskgarden/svg-icons/blob/main/LICENSE.md
+
+Google Cloud Icons (gcp)
+Author: Google Cloud
+Source: 
+License: Apache 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+
+GeoGlyphs (geo)
+Author: Sam Matthews
+Source: https://github.com/cugos/geoglyphs
+License: MIT — https://github.com/cugos/geoglyphs/blob/main/LICENSE.md
+
+css.gg (gg)
+Author: Astrit
+Source: https://github.com/astrit/css.gg
+License: MIT — https://github.com/astrit/css.gg/blob/master/LICENSE
+
+Ginetex Care Symbols (ginetex)
+Author: YESSIR Organization
+Source: https://github.com/yessir-web-tech/ginetex-icons
+License: MIT — https://github.com/yessir-web-tech/ginetex-icons/blob/main/LICENSE
+
+Font-GIS (gis)
+Author: Jean-Marc Viglino
+Source: https://github.com/viglino/font-gis
+License: CC BY 4.0 — https://github.com/Viglino/font-gis/blob/main/LICENSE-CC-BY.md
+
+Glyphs (glyphs)
+Author: Goran Spasojevic
+Source: https://github.com/gorango/glyphs
+License: MIT — https://github.com/gorango/glyphs/blob/main/license
+
+Glyphs Poly (glyphs-poly)
+Author: Goran Spasojevic
+Source: https://github.com/gorango/glyphs
+License: MIT — https://github.com/gorango/glyphs/blob/main/license
+
+Gravity UI Icons (gravity-ui)
+Author: YANDEX LLC
+Source: https://github.com/gravity-ui/icons/
+License: MIT — https://github.com/gravity-ui/icons/blob/main/LICENSE
+
+Griddy Icons (griddy-icons)
+Author: Zuzana Benova
+Source: https://github.com/griddy-icons/griddy-icons
+License: MIT — https://github.com/griddy-icons/griddy-icons/blob/main/LICENSE
+
+Gridicons (gridicons)
+Author: Automattic
+Source: https://github.com/Automattic/gridicons
+License: GPL 2.0 — https://github.com/Automattic/gridicons/blob/trunk/LICENSE.md
+
+Grommet Icons (grommet-icons)
+Author: Grommet
+Source: https://github.com/grommet/grommet-icons
+License: Apache 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+
+Guidance (guidance)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Health Icons (healthicons)
+Author: Resolve to Save Lives
+Source: https://github.com/resolvetosavelives/healthicons
+License: MIT — https://github.com/resolvetosavelives/healthicons/blob/main/LICENSE
+
+HeroIcons (heroicons)
+Author: Refactoring UI Inc
+Source: https://github.com/tailwindlabs/heroicons
+License: MIT — https://github.com/tailwindlabs/heroicons/blob/master/LICENSE
+
+HeroIcons v1 Outline (heroicons-outline)
+Author: Refactoring UI Inc
+Source: https://github.com/tailwindlabs/heroicons
+License: MIT — https://github.com/tailwindlabs/heroicons/blob/master/LICENSE
+
+HeroIcons v1 Solid (heroicons-solid)
+Author: Refactoring UI Inc
+Source: https://github.com/tailwindlabs/heroicons
+License: MIT — https://github.com/tailwindlabs/heroicons/blob/master/LICENSE
+
+Huge Icons (hugeicons)
+Author: Hugeicons
+Source: https://icon-sets.iconify.design/icon-sets/hugeicons/
+License: MIT — 
+
+Humbleicons (humbleicons)
+Author: Jiří Zralý
+Source: https://github.com/zraly/humbleicons
+License: MIT — https://github.com/zraly/humbleicons/blob/master/license
+
+Google Material Icons (ic)
+Author: Material Design Authors
+Source: https://github.com/material-icons/material-icons
+License: Apache 2.0 — https://github.com/material-icons/material-icons/blob/master/LICENSE
+
+IcoMoon Free (icomoon-free)
+Author: Keyamoon
+Source: https://github.com/Keyamoon/IcoMoon-Free
+License: GPL — https://www.gnu.org/licenses/gpl.html
+
+IconPark (icon-park)
+Author: ByteDance
+Source: https://github.com/bytedance/IconPark
+License: Apache 2.0 — https://github.com/bytedance/IconPark/blob/master/LICENSE
+
+IconPark Outline (icon-park-outline)
+Author: ByteDance
+Source: https://github.com/bytedance/IconPark
+License: Apache 2.0 — https://github.com/bytedance/IconPark/blob/master/LICENSE
+
+IconPark Solid (icon-park-solid)
+Author: ByteDance
+Source: https://github.com/bytedance/IconPark
+License: Apache 2.0 — https://github.com/bytedance/IconPark/blob/master/LICENSE
+
+IconPark TwoTone (icon-park-twotone)
+Author: ByteDance
+Source: https://github.com/bytedance/IconPark
+License: Apache 2.0 — https://github.com/bytedance/IconPark/blob/master/LICENSE
+
+IconaMoon (iconamoon)
+Author: Dariush Habibpour
+Source: https://github.com/dariushhpg1/IconaMoon
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+IconMind (iconmind)
+Author: IconMind
+Source: https://github.com/Iconmind/iconmind
+License: MIT — https://github.com/Iconmind/iconmind/blob/main/LICENSE
+
+Iconoir (iconoir)
+Author: Luca Burgio
+Source: https://github.com/iconoir-icons/iconoir
+License: MIT — https://github.com/iconoir-icons/iconoir/blob/main/LICENSE
+
+Icons8 Windows 10 Icons (icons8)
+Author: Icons8
+Source: https://github.com/icons8/windows-10-icons
+License: MIT — 
+
+Icalicons (il)
+Author: Icalia Labs
+Source: 
+License: MIT — 
+
+IonIcons (ion)
+Author: Ben Sperry
+Source: https://github.com/ionic-team/ionicons
+License: MIT — https://github.com/ionic-team/ionicons/blob/main/LICENSE
+
+Innowatio Font (iwwa)
+Author: Innowatio
+Source: https://github.com/innowatio/iwwa-icons
+License: Apache 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+
+Siemens Industrial Experience Icons (ix)
+Author: Siemens AG
+Source: https://github.com/siemens/ix-icons
+License: MIT — https://github.com/siemens/ix-icons/blob/main/LICENSE.md
+
+Jam Icons (jam)
+Author: Michael Amprimo
+Source: https://github.com/michaelampr
+License: MIT — https://github.com/cyberalien/jam-backup/blob/main/LICENSE
+
+Kubernetes Icons (k8s)
+Author: The Kubernetes Authors
+Source: https://kubernetes.io
+License: Apache 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+
+Keyline Icons (keyline-icons)
+Author: Keyline Icons
+Source: https://github.com/keyline-icons/keyline-icons
+License: MIT — https://github.com/keyline-icons/keyline-icons/blob/main/LICENSE
+
+Line Awesome (la)
+Author: Icons8
+Source: https://github.com/icons8/line-awesome
+License: Apache 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+
+Lets Icons (lets-icons)
+Author: Leonid Tsvetkov
+Source: https://www.figma.com/community/file/886554014393250663
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Lineicons (lineicons)
+Author: Lineicons
+Source: https://github.com/LineiconsHQ/Lineicons
+License: MIT — https://github.com/LineiconsHQ/Lineicons/blob/main/LICENSE.md
+
+SVG Logos (logos)
+Author: Gil Barbara
+Source: https://github.com/gilbarbara/logos
+License: CC0 — https://raw.githubusercontent.com/gilbarbara/logos/master/LICENSE.txt
+
+Ligature Symbols (ls)
+Author: Kazuyuki Motoyama
+Source: https://github.com/kudakurage/LigatureSymbols
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Lsicon (lsicon)
+Author: Wis Design
+Source: https://www.lsicon.com/
+License: MIT — https://github.com/wisdesignsystem/lsicon/blob/main/LICENSE
+
+Lucide (lucide)
+Author: Lucide Contributors
+Source: https://github.com/lucide-icons/lucide
+License: ISC — https://github.com/lucide-icons/lucide/blob/main/LICENSE
+
+Lucide Lab (lucide-lab)
+Author: Lucide Contributors
+Source: https://github.com/lucide-icons/lucide-lab
+License: ISC — https://github.com/lucide-icons/lucide-lab/blob/main/LICENSE
+
+Mage Icons (mage)
+Author: MageIcons
+Source: https://github.com/Mage-Icons/mage-icons
+License: Apache 2.0 — https://github.com/Mage-Icons/mage-icons/blob/main/License.txt
+
+Majesticons (majesticons)
+Author: Gerrit Halfmann
+Source: https://github.com/halfmage/majesticons
+License: MIT — https://github.com/halfmage/majesticons/blob/main/LICENSE
+
+Maki (maki)
+Author: Mapbox
+Source: https://github.com/mapbox/maki
+License: CC0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+Map Icons (map)
+Author: Scott de Jonge
+Source: https://github.com/scottdejonge/map-icons
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Marketeq (marketeq)
+Author: Marketeq
+Source: 
+License: MIT — 
+
+Material Icon Theme (material-icon-theme)
+Author: Material Extensions
+Source: https://github.com/material-extensions/vscode-material-icon-theme
+License: MIT — https://github.com/material-extensions/vscode-material-icon-theme/blob/main/LICENSE
+
+Material Symbols (material-symbols)
+Author: Google
+Source: https://github.com/google/material-design-icons
+License: Apache 2.0 — https://github.com/google/material-design-icons/blob/master/LICENSE
+
+Material Symbols Light (material-symbols-light)
+Author: Google
+Source: https://github.com/google/material-design-icons
+License: Apache 2.0 — https://github.com/google/material-design-icons/blob/master/LICENSE
+
+Matita (matita)
+Author: matita.dev
+Source: https://github.com/matita-dev/icons
+License: MIT — https://github.com/matita-dev/icons/blob/main/LICENSE
+
+Material Design Icons (mdi)
+Author: Pictogrammers
+Source: https://github.com/Templarian/MaterialDesign
+License: Apache 2.0 — https://github.com/Templarian/MaterialDesign/blob/master/LICENSE
+
+Material Design Light (mdi-light)
+Author: Pictogrammers
+Source: https://github.com/Templarian/MaterialDesignLight
+License: Open Font License — https://github.com/Templarian/MaterialDesignLight/blob/master/LICENSE.md
+
+Medical Icons (medical-icon)
+Author: Samuel Frémondière
+Source: https://github.com/samcome/webfont-medical-icons
+License: MIT — https://github.com/samcome/webfont-medical-icons/blob/master/LICENSE
+
+Memory Icons (memory)
+Author: Pictogrammers
+Source: https://github.com/Pictogrammers/Memory
+License: Apache 2.0 — https://github.com/Pictogrammers/Memory/blob/main/LICENSE
+
+Meteocons (meteocons)
+Author: Bas Milius
+Source: https://github.com/basmilius/weather-icons
+License: MIT — https://github.com/basmilius/weather-icons/blob/dev/LICENSE
+
+Meteor Icons (meteor-icons)
+Author: zkreations
+Source: https://github.com/zkreations/icons
+License: MIT — https://github.com/zkreations/icons/blob/main/LICENSE
+
+Mono Icons (mi)
+Author: Mono
+Source: https://github.com/mono-company/mono-icons
+License: MIT — https://github.com/mono-company/mono-icons/blob/master/LICENSE.md
+
+MingCute Icon (mingcute)
+Author: MingCute Design
+Source: https://github.com/Richard9394/MingCute
+License: Apache 2.0 — https://github.com/Richard9394/MingCute/blob/main/LICENSE
+
+Mono Icons (mono-icons)
+Author: Mono
+Source: https://github.com/mono-company/mono-icons
+License: MIT — https://github.com/mono-company/mono-icons/blob/master/LICENSE.md
+
+Myna UI Icons (mynaui)
+Author: Praveen Juge
+Source: https://github.com/praveenjuge/mynaui-icons
+License: MIT — https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE
+
+Nimbus (nimbus)
+Author: Linkedstore S.A.
+Source: https://github.com/cyberalien/nimbus-icons
+License: MIT — https://github.com/cyberalien/nimbus-icons/blob/main/LICENSE
+
+Nonicons (nonicons)
+Author: yamatsum
+Source: https://github.com/yamatsum/nonicons
+License: MIT — https://github.com/yamatsum/nonicons/blob/master/LICENSE
+
+Noto Emoji (noto)
+Author: Google Inc
+Source: https://github.com/googlefonts/noto-emoji
+License: Apache 2.0 — https://github.com/googlefonts/noto-emoji/blob/main/svg/LICENSE
+
+Noto Emoji (v1) (noto-v1)
+Author: Google Inc
+Source: https://github.com/googlefonts/noto-emoji
+License: Apache 2.0 — https://github.com/googlefonts/noto-emoji/blob/main/svg/LICENSE
+
+NRK Core Icons (nrk)
+Author: Norsk rikskringkasting
+Source: https://github.com/nrkno/core-icons
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Octicons (octicon)
+Author: GitHub
+Source: https://github.com/primer/octicons/
+License: MIT — https://github.com/primer/octicons/blob/main/LICENSE
+
+Open Iconic (oi)
+Author: Iconic
+Source: https://github.com/iconic/open-iconic
+License: MIT — https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE
+
+OOUI (ooui)
+Author: OOUI Team
+Source: https://github.com/wikimedia/oojs-ui
+License: MIT — https://github.com/wikimedia/oojs-ui/blob/master/LICENSE-MIT
+
+OpenMoji (openmoji)
+Author: OpenMoji
+Source: https://github.com/hfg-gmuend/openmoji
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+OSM Icons (osmic)
+Author: GMGeo
+Source: https://github.com/gmgeo/osmic
+License: CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+OpenSearch UI (oui)
+Author: OpenSearch Contributors
+Source: https://github.com/opensearch-project/oui
+License: Apache 2.0 — https://github.com/opensearch-project/oui/blob/main/LICENSE.txt
+
+Gitlab SVGs (pajamas)
+Author: GitLab B.V.
+Source: https://gitlab.com/gitlab-org/gitlab-svgs/-/tree/main
+License: MIT — https://gitlab.com/gitlab-org/gitlab-svgs/-/blob/main/LICENSE
+
+Pepicons (pepicons)
+Author: CyCraft
+Source: https://github.com/CyCraft/pepicons
+License: CC BY 4.0 — https://github.com/CyCraft/pepicons/blob/dev/LICENSE
+
+Pepicons Pencil (pepicons-pencil)
+Author: CyCraft
+Source: https://github.com/CyCraft/pepicons
+License: CC BY 4.0 — https://github.com/CyCraft/pepicons/blob/dev/LICENSE
+
+Pepicons Pop! (pepicons-pop)
+Author: CyCraft
+Source: https://github.com/CyCraft/pepicons
+License: CC BY 4.0 — https://github.com/CyCraft/pepicons/blob/dev/LICENSE
+
+Pepicons Print (pepicons-print)
+Author: CyCraft
+Source: https://github.com/CyCraft/pepicons
+License: CC BY 4.0 — https://github.com/CyCraft/pepicons/blob/dev/LICENSE
+
+Phosphor (ph)
+Author: Phosphor Icons
+Source: https://github.com/phosphor-icons/core
+License: MIT — https://github.com/phosphor-icons/core/blob/main/LICENSE
+
+Pico-icon (picon)
+Author: Picon Contributors
+Source: https://github.com/yne/picon
+License: Open Font License — https://github.com/yne/picon/blob/master/OFL.txt
+
+Pinhead Map Icons (pinhead)
+Author: Quincy Morgan
+Source: https://github.com/waysidemapping/pinhead
+License: CC0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+Pixel Icon (pixel)
+Author: HackerNoon
+Source: https://github.com/hackernoon/pixel-icon-library
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Pixelarticons (pixelarticons)
+Author: Gerrit Halfmann
+Source: https://github.com/halfmage/pixelarticons
+License: MIT — https://github.com/halfmage/pixelarticons/blob/master/LICENSE
+
+Prime Icons (prime)
+Author: PrimeTek
+Source: https://github.com/primefaces/primeicons
+License: MIT — https://github.com/primefaces/primeicons/blob/master/LICENSE
+
+ProIcons (proicons)
+Author: ProCode
+Source: https://github.com/ProCode-Software/proicons
+License: MIT — https://github.com/ProCode-Software/proicons/blob/main/LICENSE
+
+Qlementine Icons (qlementine-icons)
+Author: Olivier Cléro
+Source: https://github.com/oclero/qlementine-icons
+License: MIT — https://github.com/oclero/qlementine-icons/blob/master/LICENSE
+
+Quill Icons (quill)
+Author: Casper Lourens
+Source: https://www.figma.com/community/file/1034432054377533052/Quill-Iconset
+License: MIT — https://github.com/yourtempo/tempo-quill-icons/blob/main/LICENSE
+
+Radix Icons (radix-icons)
+Author: WorkOS
+Source: https://github.com/radix-ui/icons
+License: MIT — https://github.com/radix-ui/icons/blob/master/LICENSE
+
+Raphael (raphael)
+Author: Dmitry Baranovskiy
+Source: https://github.com/dmitrybaranovskiy/raphael
+License: MIT — 
+
+Reicon (reicon)
+Author: REICON
+Source: https://github.com/dqev/reicon
+License: MIT — https://github.com/dqev/reicon/blob/main/LICENSE
+
+Remix Icon (ri)
+Author: Remix Design
+Source: https://github.com/cyberalien/RemixIcon
+License: Apache 2.0 — https://github.com/cyberalien/RemixIcon/blob/master/License
+
+Rivet Icons (rivet-icons)
+Author: Indiana University
+Source: https://github.com/indiana-university/rivet-icons
+License: BSD 3-Clause — https://github.com/indiana-university/rivet-icons/blob/develop/LICENSE
+
+Röntgen (roentgen)
+Author: Sergey Vartanov
+Source: https://github.com/enzet/Roentgen
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+selfh.st/icons (selfhst)
+Author: selfh.st
+Source: https://github.com/selfhst/icons
+License: CC BY 4.0 — https://github.com/selfhst/icons/blob/main/LICENSE
+
+Sargam Icons (si)
+Author: Abhimanyu Rana
+Source: https://github.com/planetabhi/sargam-icons
+License: MIT — https://github.com/planetabhi/sargam-icons/blob/main/LICENSE.txt
+
+SmartIcons Glyph (si-glyph)
+Author: SmartIcons
+Source: 
+License: CC BY SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+SidekickIcons (sidekickicons)
+Author: Andri Soone
+Source: https://github.com/ndri/sidekickicons
+License: MIT — https://github.com/ndri/sidekickicons/blob/master/LICENSE
+
+Simple Icons (simple-icons)
+Author: Simple Icons Collaborators
+Source: https://github.com/simple-icons/simple-icons
+License: CC0 1.0 — https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md
+
+Simple line icons (simple-line-icons)
+Author: Sabbir Ahmed
+Source: https://github.com/thesabbir/simple-line-icons
+License: MIT — https://github.com/thesabbir/simple-line-icons/blob/master/LICENSE.md
+
+Skill Icons (skill-icons)
+Author: tandpfun
+Source: https://github.com/tandpfun/skill-icons
+License: MIT — https://github.com/tandpfun/skill-icons/blob/main/LICENSE
+
+Solar (solar)
+Author: 480 Design
+Source: https://www.figma.com/community/file/1166831539721848736
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Stash Icons (stash)
+Author: Pingback LLC
+Source: https://github.com/stash-ui/icons
+License: MIT — https://github.com/stash-ui/icons/blob/master/LICENSE
+
+Streamline (streamline)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Streamline Block (streamline-block)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Streamline color (streamline-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Cyber free icons (streamline-cyber)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Cyber color icons (streamline-cyber-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Streamline Emojis (streamline-emojis)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Flex free icons (streamline-flex)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Flex color icons (streamline-flex-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Freehand free icons (streamline-freehand)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Freehand color icons (streamline-freehand-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Kameleon color icons (streamline-kameleon-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Logos free icons (streamline-logos)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Pixel free icons (streamline-pixel)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Plump free icons (streamline-plump)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Plump color icons (streamline-plump-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Sharp free icons (streamline-sharp)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Sharp color icons (streamline-sharp-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Stickies color icons (streamline-stickies-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Ultimate free icons (streamline-ultimate)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Ultimate color icons (streamline-ultimate-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Subway Icon Set (subway)
+Author: Mariusz Ostrowski
+Source: https://github.com/mariuszostrowski/subway
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+System UIcons (system-uicons)
+Author: Corey Ginnivan
+Source: https://github.com/CoreyGinnivan/system-uicons
+License: Unlicense — https://github.com/CoreyGinnivan/system-uicons/blob/master/LICENSE
+
+Tabler Icons (tabler)
+Author: Paweł Kuna
+Source: https://github.com/tabler/tabler-icons
+License: MIT — https://github.com/tabler/tabler-icons/blob/master/LICENSE
+
+TDesign Icons (tdesign)
+Author: TDesign
+Source: https://github.com/Tencent/tdesign-icons
+License: MIT — https://github.com/Tencent/tdesign-icons/blob/main/LICENSE
+
+Teenyicons (teenyicons)
+Author: smhmd
+Source: https://github.com/teenyicons/teenyicons
+License: MIT — https://github.com/teenyicons/teenyicons/blob/master/LICENSE
+
+Temaki (temaki)
+Author: Bryan Housel
+Source: https://github.com/rapideditor/temaki
+License: CC0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+theSVG (thesvg)
+Author: thesvg.org
+Source: https://github.com/glincker/thesvg
+License: MIT — https://github.com/glincker/thesvg/blob/main/LICENSE
+
+theSVG Color (thesvg-color)
+Author: thesvg.org
+Source: https://github.com/glincker/thesvg
+License: MIT — https://github.com/glincker/thesvg/blob/main/LICENSE
+
+Web3 Icons (token)
+Author: 0xa3k5
+Source: https://github.com/0xa3k5/web3icons
+License: MIT — https://github.com/0xa3k5/web3icons/blob/main/LICENCE
+
+Web3 Icons Branded (token-branded)
+Author: 0xa3k5
+Source: https://github.com/0xa3k5/web3icons
+License: MIT — https://github.com/0xa3k5/web3icons/blob/main/LICENCE
+
+TopCoat Icons (topcoat)
+Author: TopCoat
+Source: https://github.com/topcoat/icons
+License: Apache 2.0 — https://github.com/topcoat/icons/blob/master/LICENSE
+
+Twitter Emoji (twemoji)
+Author: Twitter
+Source: https://github.com/jdecked/twemoji
+License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+Typicons (typcn)
+Author: Stephen Hutchings
+Source: https://github.com/stephenhutchings/typicons.font
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+
+Unicons (uil)
+Author: Iconscout
+Source: https://github.com/Iconscout/unicons
+License: Apache 2.0 — https://github.com/Iconscout/unicons/blob/master/LICENSE
+
+Unicons Monochrome (uim)
+Author: Iconscout
+Source: https://github.com/Iconscout/unicons
+License: Apache 2.0 — https://github.com/Iconscout/unicons/blob/master/LICENSE
+
+Unicons Solid (uis)
+Author: Iconscout
+Source: https://github.com/Iconscout/unicons
+License: Apache 2.0 — https://github.com/Iconscout/unicons/blob/master/LICENSE
+
+Unicons Thin Line (uit)
+Author: Iconscout
+Source: https://github.com/Iconscout/unicons
+License: Apache 2.0 — https://github.com/Iconscout/unicons/blob/master/LICENSE
+
+uiw icons (uiw)
+Author: liwen0526
+Source: https://github.com/uiwjs/icons
+License: MIT — https://github.com/uiwjs/icons/blob/master/LICENSE
+
+UnJS Logos (unjs)
+Author: UnJS
+Source: https://github.com/unjs
+License: Apache 2.0 — 
+
+Vaadin Icons (vaadin)
+Author: Vaadin
+Source: https://github.com/vaadin/web-components
+License: Apache 2.0 — 
+
+Vadivam (vadivam)
+Author: Praveen Juge
+Source: https://github.com/praveenjuge/vadivam
+License: MIT — https://github.com/praveenjuge/vadivam/blob/main/LICENSE
+
+Vesper Icons (vs)
+Author: TableCheck
+Source: https://github.com/kkvesper/vesper-icons
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+VSCode Icons (vscode-icons)
+Author: Roberto Huertas
+Source: https://github.com/vscode-icons/vscode-icons
+License: MIT — https://github.com/vscode-icons/vscode-icons/blob/master/LICENSE
+
+Web Symbols Liga (websymbol)
+Author: Just Be Nice studio
+Source: 
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+WeUI Icon (weui)
+Author: WeUI
+Source: https://github.com/weui/weui-icon
+License: MIT — 
+
+WebHostingHub Glyphs (whh)
+Author: WebHostingHub
+Source: 
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+Weather Icons (wi)
+Author: Erik Flowers
+Source: https://github.com/erikflowers/weather-icons
+License: Open Font License — https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+WordPress Icons (wordpress)
+Author: The WordPress Contributors
+Source: https://github.com/WordPress/gutenberg/tree/HEAD/packages/icons
+License: GPL — https://github.com/WordPress/gutenberg/blob/HEAD/LICENSE.md#gnu-general-public-license-version-2
+
+Icons8 Windows 8 Icons (wpf)
+Author: Icons8
+Source: https://github.com/icons8/WPF-UI-Framework
+License: MIT — 
+
+Material Design Iconic Font (zmdi)
+Author: MDI Community
+Source: https://github.com/zavoloklom/material-design-iconic-font
+License: Open Font License — 
+
+Zondicons (zondicons)
+Author: Steve Schoger
+Source: https://github.com/dukestreetstudio/zondicons
+License: MIT — https://github.com/dukestreetstudio/zondicons/blob/master/LICENSE
+

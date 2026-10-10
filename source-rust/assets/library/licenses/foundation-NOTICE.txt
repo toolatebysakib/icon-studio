@@ -1,0 +1,7 @@
+Foundation (foundation)
+Author: Zurb
+Source: https://github.com/zurb/foundation-icon-fonts
+Declared license: MIT
+License reference: 
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

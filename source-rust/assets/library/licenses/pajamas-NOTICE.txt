@@ -1,0 +1,7 @@
+Gitlab SVGs (pajamas)
+Author: GitLab B.V.
+Source: https://gitlab.com/gitlab-org/gitlab-svgs/-/tree/main
+Declared license: MIT
+License reference: https://gitlab.com/gitlab-org/gitlab-svgs/-/blob/main/LICENSE
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

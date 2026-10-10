@@ -1,0 +1,7 @@
+Ultimate color icons (streamline-ultimate-color)
+Author: Streamline
+Source: https://github.com/webalys-hq/streamline-vectors
+Declared license: CC-BY-4.0
+License reference: https://creativecommons.org/licenses/by/4.0/
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

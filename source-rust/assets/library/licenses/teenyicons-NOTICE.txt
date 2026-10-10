@@ -1,0 +1,7 @@
+Teenyicons (teenyicons)
+Author: smhmd
+Source: https://github.com/teenyicons/teenyicons
+Declared license: MIT
+License reference: https://github.com/teenyicons/teenyicons/blob/master/LICENSE
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

@@ -1,0 +1,7 @@
+Circle Flags (circle-flags)
+Author: HatScripts
+Source: https://github.com/HatScripts/circle-flags
+Declared license: MIT
+License reference: https://github.com/HatScripts/circle-flags/blob/gh-pages/LICENSE
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

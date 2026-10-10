@@ -1,40 +1,39 @@
 # Icon Studio by Sakib
 
-[Open Icon Studio](https://iconeditor.pages.dev/) · [Download for Resolve](https://github.com/toolatebysakib/icon-studio/releases/latest/download/icon-studio-resolve.zip) · [Download the icon library](https://github.com/toolatebysakib/icon-studio/releases/latest/download/icon-library.zip)
+[Open the website](https://iconeditor.pages.dev/) · [Download for Resolve](https://github.com/toolatebysakib/icon-studio/releases/latest/download/icon-studio-resolve.zip) · [Download 382k icons](https://github.com/toolatebysakib/icon-studio/releases/latest/download/icon-library-rust.zip)
 
-An icon composer for the web and DaVinci Resolve Studio. Includes PNG/SVG export, drag-and-drop imports, batch styling and renaming, palettes, effects, local AI background removal, and portable visual presets.
+Version 4 application source is in [`source-rust/`](source-rust). Earlier JavaScript/Python sources are retained for rollback.
 
-Timeline insertion automatically chooses the lowest available track above all clips overlapping the complete icon duration at the playhead. It creates a track when needed and keeps existing clips and the playhead unchanged. Manual track/position remains an optional override.
+## Rust edition
 
-The Resolve companion adds native file dragging, Media Pool and timeline insertion, generated PNGs stored in selected folders, an archive organized by project, and project-specific looks. New projects inherit the latest look; returning projects restore their own look and workspace by their stable Resolve project ID.
+A shared Rust icon editor for the browser and DaVinci Resolve. The browser compiles Rust to WebAssembly; the desktop host is Rust with the operating system's WebView. A LuaJIT connector runs Resolve SDK calls on Resolve's UI dispatcher. React, Electron and Python are not runtime dependencies of this edition.
 
-Version 3.1 adds a compact Resolve window, an Always on Top toggle, responsive tool labels, batch Media Pool imports, and configurable Shift+Space quick search with five shortcut presets and custom recording with up to 25 results on both platforms.
+## Install in Resolve
 
-## Resolve
+Extract **the complete ZIP**. On Windows, run `Install Windows.cmd`. On macOS, run `Install Mac.command`. Open **Workspace → Scripts → Utility → Icon Studio**. Choose separate raw-library and generated-output folders in Settings. Download the collections you want there. Generated PNGs and their SVG sources are stored in a project subfolder under your output folder; the archive lists those actual files. Existing project workspaces, generated-file records, output settings and project looks are preserved.
 
-Download and extract the complete Resolve ZIP. Run the Windows or Mac installer, then open **Workspace > Scripts > Utility > Icon Studio**. Select raw-library and generated-output folders in **Settings**. [Detailed instructions](resolve/README.md).
+The Mac binary is universal (Intel and Apple Silicon). It is built on a macOS runner. Native Resolve behavior on Windows and macOS is left for the user's testing; compilation does not confirm integration behavior. Resolve Studio is needed for the UI dispatcher used by this connector.
 
-Requires Resolve Studio 19.0.2+ and Python scripting support. Resolve 21 includes Python. Windows Resolve integration is validated during development; the Mac installer and paths are reviewed but native Mac behavior needs testing on a Mac. PNG clip duration follows Resolve's Standard Still Duration preference.
+## Use
 
-## Offline library
+Shift+Space opens quick search. Settings includes five shortcut presets and custom recording. Search shows up to 25 results, with arrow-key navigation and Enter to add. The icon library defaults to colorful collections; use its collection menu to browse all families. SVG, PNG, JPG and WebP files can be imported, dropped or pasted. Select collection icons for batch styling, renaming, export, and Resolve Media Pool import. Gradient palettes work for backgrounds and foregrounds. Looks are portable preset files; Resolve restores project looks and new projects inherit the last applied/saved look.
 
-The `icons/` folder contains 24,981 SVG files, including Lucide, Tabler, Google Material Symbols, Flat Color Icons and the website's starter collection. `manifest.json` describes the files. Collection licenses and sources are included. The downloadable pack is approximately 12 MB rather than hundreds of megabytes.
+Timeline insertion automatically selects an enabled, unlocked track above every clip overlapping the icon's full duration, creating a track when needed. Still duration follows Resolve's Standard Still Duration. Manual track settings remain available. The Lua connector stages only the new icon on a new top track to measure its actual duration, then Rust selects a clear track. The original playhead is restored.
 
-## Build the website
+## Icon storage
 
-```sh
-npm ci
-npm run dev
-npm test
-npm run build
-```
+The upstream catalog is pinned to `@iconify/json 2.2.541`. It contains **382,085 named icons**, **366,739 unique SVG bodies**, **52,523 multicolor icons** and **235 collections**, using **98.9 MB of gzip data** plus about 1.4 MB of catalog, attribution and ZIP overhead. Static collections are filtered using their declared open-source SPDX licenses; animated and noncommercial collections are excluded. Icons are stored as independently gzip-compressed collection JSON files, rather than hundreds of thousands of small SVG files. The browser loads collection artwork on demand. The full searchable name index is compressed separately (1.36 MB). The catalog records exact counts, per-pack sizes, SHA-256 hashes, authors, source links, and licenses. `library/LICENSES.txt` and `library/licenses/` retain notices and license texts. Counts describe named icons and separately report unique SVG artwork; aliases and invented variants do not inflate the total.
 
-The development-only `qa.html` page validates SVG sanitization, PNG rendering, transparency, recoloring, archives, AI background removal and effects. It is excluded from the production build. The local AI model and runtime are included in `public/`.
+## Build
 
-Deploy the generated `dist/` to the existing Cloudflare Pages project `iconeditor`, production branch `main`, using Wrangler 4 and environment credentials:
+Install Rust, the `wasm32-unknown-unknown` target, and `wasm-bindgen-cli` matching Cargo.lock. If using the source ZIP, also download the full library ZIP and copy its `icon-studio-library-v2/` contents into `assets/library/`. The GitHub source checkout already includes these collections. Run:
 
 ```sh
-npx wrangler pages deploy dist --project-name iconeditor --branch main
+cargo build -p icon-studio-web --release --target wasm32-unknown-unknown
+wasm-bindgen --target web --out-dir dist/pkg target/wasm32-unknown-unknown/release/icon_studio_web.wasm
+cargo build -p icon-studio-desktop --release
 ```
 
-No account credentials are included. Source images are processed locally. Blackmagic's proprietary runtimes and SDK binaries are installed by Resolve and are not redistributed here. Third-party licenses are preserved in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and `public/licenses/`.
+Copy `assets/*` into `dist/`, and place that web folder beside `IconStudio.exe` / `IconStudio` for native packaging. `build.ps1` supports the workspace-local Windows toolchain; CI uses standard Rust installs. The small `platform.mjs` module adapts browser APIs and the external ONNX runtime. Editor UI, state, search, SVG rendering, naming, image preprocessing/masking, and native operations are Rust. CSS styles the DOM. Lua is retained only for Resolve's supported SDK boundary.
+
+App code is MIT licensed. Icon collections retain their individual licenses, including share-alike or copyleft terms where declared; they are separately distributed artwork, not relicensed as application code.

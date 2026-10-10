@@ -1,0 +1,16 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Access-Control-Allow-Origin: *
+/library/*
+  Cache-Control: public, max-age=86400
+/pkg/*
+  Cache-Control: no-cache
+/*.wasm
+  Content-Type: application/wasm
+
+/library/catalog.json
+  Cache-Control: no-cache
+/library/index.json.gz
+  Cache-Control: no-cache

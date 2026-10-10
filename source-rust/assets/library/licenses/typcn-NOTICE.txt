@@ -1,0 +1,7 @@
+Typicons (typcn)
+Author: Stephen Hutchings
+Source: https://github.com/stephenhutchings/typicons.font
+Declared license: CC-BY-SA-4.0
+License reference: https://creativecommons.org/licenses/by-sa/4.0/
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

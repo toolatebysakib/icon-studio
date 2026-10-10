@@ -1,0 +1,7 @@
+Kubernetes Icons (k8s)
+Author: The Kubernetes Authors
+Source: https://kubernetes.io
+Declared license: Apache-2.0
+License reference: https://www.apache.org/licenses/LICENSE-2.0
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

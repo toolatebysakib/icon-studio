@@ -1,0 +1,7 @@
+Fontelico (fontelico)
+Author: Fontello
+Source: https://github.com/fontello/fontelico.font
+Declared license: CC-BY-SA-3.0
+License reference: https://creativecommons.org/licenses/by-sa/3.0/
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

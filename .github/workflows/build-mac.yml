@@ -1,0 +1,29 @@
+name: Build Rust Mac app
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: source-rust
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Rust targets
+        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - name: Compile Apple Silicon
+        run: cargo build -p icon-studio-desktop --release --target aarch64-apple-darwin --locked
+      - name: Compile Intel
+        run: cargo build -p icon-studio-desktop --release --target x86_64-apple-darwin --locked
+      - name: Create universal executable
+        run: |
+          mkdir -p mac-binary
+          lipo -create target/aarch64-apple-darwin/release/IconStudio target/x86_64-apple-darwin/release/IconStudio -output mac-binary/IconStudio
+          codesign --force --sign - mac-binary/IconStudio
+          chmod +x mac-binary/IconStudio
+      - uses: actions/upload-artifact@v4
+        with:
+          name: icon-studio-mac-universal
+          path: source-rust/mac-binary/IconStudio

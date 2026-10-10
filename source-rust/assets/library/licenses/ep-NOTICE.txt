@@ -1,0 +1,38 @@
+Element Plus (ep)
+Author: Element Plus
+Source: https://github.com/element-plus/element-plus-icons
+Declared license: MIT
+License reference: https://github.com/element-plus/element-plus-icons/blob/main/packages/svg/package.json
+
+Upstream notice retrieved from https://raw.githubusercontent.com/element-plus/element-plus-icons/main/packages/svg/package.json
+
+{
+  "name": "@element-plus/icons-svg",
+  "version": "2.3.2",
+  "description": "SVG icon for Element Plus Icons collection.",
+  "license": "MIT",
+  "homepage": "https://element-plus.org/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/element-plus/element-plus-icons.git",
+    "directory": "packages/svg"
+  },
+  "bugs": {
+    "url": "https://github.com/element-plus/element-plus-icons/issues"
+  },
+  "keywords": [
+    "icon",
+    "svg",
+    "element-plus"
+  ],
+  "files": [
+    "*.svg"
+  ],
+  "scripts": {
+    "optimize": "svgo -f . -o ."
+  },
+  "devDependencies": {
+    "svgo": "^4.0.0"
+  }
+}
+

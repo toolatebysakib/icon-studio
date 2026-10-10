@@ -1,0 +1,7 @@
+WeUI Icon (weui)
+Author: WeUI
+Source: https://github.com/weui/weui-icon
+Declared license: MIT
+License reference: 
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

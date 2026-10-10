@@ -1,0 +1,7 @@
+Material Design Iconic Font (zmdi)
+Author: MDI Community
+Source: https://github.com/zavoloklom/material-design-iconic-font
+Declared license: OFL-1.1
+License reference: 
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

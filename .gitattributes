@@ -1,0 +1,6 @@
+*.gz binary
+*.onnx binary
+*.wasm binary
+*.rs text eol=lf
+*.lua text eol=lf
+*.command text eol=lf

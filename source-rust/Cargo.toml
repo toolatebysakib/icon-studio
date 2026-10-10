@@ -1,0 +1,15 @@
+[workspace]
+members = ["core", "web", "desktop"]
+resolver = "2"
+
+[workspace.package]
+version = "4.0.0"
+edition = "2024"
+license = "MIT"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "s"
+strip = true
+

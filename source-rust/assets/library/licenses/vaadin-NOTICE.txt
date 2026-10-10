@@ -1,0 +1,7 @@
+Vaadin Icons (vaadin)
+Author: Vaadin
+Source: https://github.com/vaadin/web-components
+Declared license: Apache-2.0
+License reference: 
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

@@ -1,0 +1,23 @@
+Flat Color Icons (flat-color-icons)
+Author: Icons8
+Source: https://github.com/icons8/flat-Color-icons
+Declared license: MIT
+License reference: 
+
+Upstream notice retrieved from https://raw.githubusercontent.com/icons8/flat-Color-icons/master/LICENSE.md
+
+#Good Boy License
+We’ve released the icon pack under either MIT or the [Good Boy License](https://icons8.com/good-boy-license/). We invented it. Please do _whatever your mom would approve of:_
+
+##Permitted Use
+
+* Download in any format
+* Change
+* Fork
+
+##Prohibited Use
+
+* No tattoos
+* No touching with unwashed hands
+* No exchanging for drugs.
+

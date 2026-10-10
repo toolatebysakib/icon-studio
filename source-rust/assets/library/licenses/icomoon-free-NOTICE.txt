@@ -1,0 +1,7 @@
+IcoMoon Free (icomoon-free)
+Author: Keyamoon
+Source: https://github.com/Keyamoon/IcoMoon-Free
+Declared license: GPL-3.0-or-later
+License reference: https://www.gnu.org/licenses/gpl.html
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.

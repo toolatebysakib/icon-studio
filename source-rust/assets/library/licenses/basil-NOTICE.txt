@@ -1,0 +1,7 @@
+Basil (basil)
+Author: Craftwork
+Source: https://www.figma.com/community/file/931906394678748246
+Declared license: CC-BY-4.0
+License reference: https://creativecommons.org/licenses/by/4.0/
+
+Collection author/source attribution is retained above. See the corresponding SPDX license text in this directory and the upstream license reference.
