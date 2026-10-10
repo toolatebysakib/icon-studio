@@ -122,4 +122,5 @@ pub async fn save_bytes(bytes:Vec<u8>,name:&str,mime:&str)->Result<(),String>{if
   }.await;if let Err(e)=result{toast(e)}
  });
  let timer=Closure::<dyn FnMut()>::new(||{if with(|a|a.native&&!a.busy){spawn_local(async{if let Err(e)=events::sync_project().await{change(|a|a.toast=e);}});}});let _=window().set_interval_with_callback_and_timeout_and_arguments_0(timer.as_ref().unchecked_ref(),4000);timer.forget();
+ let updater=Closure::<dyn FnMut()>::new(||{if with(|a|flag(&a.settings,"appHost")&&!a.busy&&a.modal.is_empty()){events::check_updates(false)}});let _=window().set_interval_with_callback_and_timeout_and_arguments_0(updater.as_ref().unchecked_ref(),600000);updater.forget();
 }
