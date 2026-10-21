@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useSyncExternalStore } from "react";
+import { t, getLang, onLangChange } from "./i18n.js";
 import { createRoot } from "react-dom/client";
 import {
   Sparkles,
@@ -164,7 +165,7 @@ function Modal({ title, subtitle, children, onClose, wide = false }) {
           <button
             className="icon-button"
             onClick={onClose}
-            aria-label="Close dialog"
+            aria-label={t("Close dialog")}
           >
             <X size={18} />
           </button>
@@ -186,7 +187,7 @@ function Segment({ label, value, options, onChange }) {
             aria-pressed={value === key}
             onClick={() => onChange(key)}
           >
-            {text}
+            {t(text)}
           </button>
         );
       })}
@@ -200,7 +201,7 @@ function Color({ label, value, onChange, mixed = false }) {
     <label className="color-field">
       <span>
         {label}
-        {mixed ? " · Mixed" : ""}
+        {mixed ? t(" · Mixed") : ""}
       </span>
       <div>
         <input
@@ -210,7 +211,7 @@ function Color({ label, value, onChange, mixed = false }) {
           onChange={(e) => onChange(e.target.value)}
         />
         <input
-          aria-label={`${label} hex`}
+          aria-label={t("{label} hex", { label })}
           value={text.toUpperCase()}
           maxLength={7}
           onChange={(e) => {
@@ -238,7 +239,7 @@ function Slider({
       <div>
         <span>{label}</span>
         <output>
-          {mixed ? "Mixed" : `${Math.round(value * 100) / 100}${suffix}`}
+          {mixed ? t("Mixed") : `${Math.round(value * 100) / 100}${suffix}`}
         </output>
       </div>
       <input
@@ -259,7 +260,7 @@ function Toggle({ label, hint, checked, onChange, mixed = false }) {
       <span>
         {label}
         {hint && <small>{hint}</small>}
-        {mixed && <small>Mixed selection</small>}
+        {mixed && <small>{t("Mixed selection")}</small>}
       </span>
       <input
         type="checkbox"
@@ -279,7 +280,7 @@ function Preview({ item, size = 96, paused = false, glyphOnly = false }) {
   return (
     <div
       className="icon-preview"
-      aria-label={`${item.name} preview`}
+      aria-label={t("{name} preview", { name: item.name })}
       style={{ width: size, height: size }}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
@@ -287,6 +288,8 @@ function Preview({ item, size = 96, paused = false, glyphOnly = false }) {
 }
 
 function App() {
+  // 订阅语言变化，切换语言时整棵树重渲染
+  useSyncExternalStore(onLangChange, getLang);
   const initial = useMemo(seed, []),
     [items, setItems] = useState([initial]),
     [selected, setSelected] = useState([initial.id]),
@@ -552,8 +555,8 @@ function App() {
           if (!live) return;
           notify(
             item.style.bgRemoveMode === "smart"
-              ? "Smart removal unavailable. Switched to edge detection."
-              : "Background could not be removed.",
+              ? t("Smart removal unavailable. Switched to edge detection.")
+              : t("Background could not be removed."),
           );
           setItems((list) =>
             list.map((i) =>
@@ -581,7 +584,7 @@ function App() {
     const current = itemsRef.current;
     if (current.length + incoming.length > 200) {
       notify(
-        "A workspace can hold up to 200 icons. Export or start a new project first.",
+        t("A workspace can hold up to 200 icons. Export or start a new project first."),
       );
       return;
     }
@@ -604,7 +607,7 @@ function App() {
           cleanStyle(active?.style || defaultLook()),
         ),
       ]);
-      notify(`Added ${icon.title || icon.name}`);
+      notify(t("Added {name}", { name: icon.title || icon.name }));
     } catch (e) {
       notify(e.message);
     }
@@ -615,7 +618,7 @@ function App() {
     for (const file of [...files]) {
       try {
         if (file.size > 20 * 1024 * 1024)
-          throw new Error(`${file.name}: maximum file size is 20 MB.`);
+          throw new Error(t("{name}: maximum file size is 20 MB.", { name: file.name }));
         if (/\.svg$/i.test(file.name) || file.type === "image/svg+xml") {
           incoming.push(
             newItem(
@@ -649,8 +652,8 @@ function App() {
     if (incoming.length) addItems(incoming);
     notify(
       errors.length
-        ? `Imported ${incoming.length}. Skipped: ${errors.slice(0, 3).join(", ")}`
-        : `Imported ${incoming.length} icon${incoming.length === 1 ? "" : "s"}`,
+        ? t("Imported {count}. Skipped: {skipped}", { count: incoming.length, skipped: errors.slice(0, 3).join(", ") })
+        : t(`Imported {count} icon${incoming.length === 1 ? "" : "s"}`, { count: incoming.length }),
     );
   };
   const saveProject = () => {
@@ -664,29 +667,29 @@ function App() {
       }),
       "icon-studio.iconstudio",
     );
-    notify("Project saved. Open it here to continue editing.");
+    notify(t("Project saved. Open it here to continue editing."));
   };
   const openProject = async (file) => {
     try {
       if (file.size > 100 * 1024 * 1024)
-        throw new Error("Project is too large (maximum 100 MB).");
+        throw new Error(t("Project is too large (maximum 100 MB)."));
       const next = validateProject(JSON.parse(await file.text())).map((i) => ({
         ...i,
         svg: i.svg ? sanitizeSvg(i.svg) : "",
       }));
-      if (!next.length) throw new Error("This project is empty.");
+      if (!next.length) throw new Error(t("This project is empty."));
       const names = uniqueNames(next.map((i) => i.name));
       commit(next.map((i, n) => ({ ...i, name: names[n] })));
       setSelected([next[0].id]);
       setActiveId(next[0].id);
-      notify("Project opened. Your previous workspace is available with Undo.");
+      notify(t("Project opened. Your previous workspace is available with Undo."));
     } catch (e) {
       notify(e.message);
     }
   };
   const removeSelected = () => {
     commit(itemsRef.current.filter((i) => !targetIds.includes(i.id)));
-    notify("Icons removed · Undo to restore");
+    notify(t("Icons removed · Undo to restore"));
   };
   const duplicate = () => {
     addItems(
@@ -698,7 +701,7 @@ function App() {
           name: i.name + " copy",
         })),
     );
-    notify("Selection duplicated");
+    notify(t("Selection duplicated"));
   };
   const choose = (item, event) => {
     setActiveId(item.id);
@@ -721,9 +724,9 @@ function App() {
   const copySvg = async () => {
     try {
       await navigator.clipboard.writeText(buildSvg(active));
-      notify("SVG copied to clipboard");
+      notify(t("SVG copied to clipboard"));
     } catch {
-      notify("Clipboard access unavailable. Export SVG instead.");
+      notify(t("Clipboard access unavailable. Export SVG instead."));
     }
   };
   const paste = async () => {
@@ -749,9 +752,9 @@ function App() {
           }
         }
       if (files.length) importFiles(files);
-      else notify("Copy an image or SVG first, then paste here.");
+      else notify(t("Copy an image or SVG first, then paste here."));
     } catch {
-      notify("Press Ctrl+V or ⌘V to paste an image or SVG.");
+      notify(t("Press Ctrl+V or ⌘V to paste an image or SVG."));
     }
   };
   useEffect(() => {
@@ -958,7 +961,7 @@ function App() {
     );
     if (desktop && projectContext)
       await desktop.setProjectLook(projectContext.id, look.style);
-    notify("Look saved");
+    notify(t("Look saved"));
   };
   const applyLook = async (look) => {
     applyStyle(look.style);
@@ -968,11 +971,11 @@ function App() {
     );
     if (desktop && projectContext)
       await desktop.setProjectLook(projectContext.id, look.style);
-    notify(`${look.name} applied`);
+    notify(t("{name} applied", { name: look.name }));
   };
   const generateNative = async (kind) => {
     if (removing) {
-      notify("Background removal is still processing");
+      notify(t("Background removal is still processing"));
       return;
     }
     setBusy(kind);
@@ -980,7 +983,7 @@ function App() {
       const ctx = await desktop.context();
       if (!ctx.project || ctx.project.id !== projectContext?.id)
         throw new Error(
-          "Resolve project changed. Try again after the panel updates.",
+          t("Resolve project changed. Try again after the panel updates."),
         );
       if (kind === "pool" && chosen.length > 1) {
         const generated = [];
@@ -998,7 +1001,7 @@ function App() {
           generated.map((file) => file.id),
           ctx.project.id,
         );
-        notify(`Added ${result.imported} icons to Media Pool`);
+        notify(t("Added {count} icons to Media Pool", { count: result.imported }));
         return;
       }
       let file = nativeFile;
@@ -1019,10 +1022,12 @@ function App() {
       if (kind === "download") await desktop.downloadGenerated(saved.id);
       notify(
         kind === "timeline"
-          ? `Added to timeline${insertion?.trackIndex ? ` · V${insertion.trackIndex}` : ""}`
+          ? insertion?.trackIndex
+            ? t("Added to timeline · V{track}", { track: insertion.trackIndex })
+            : t("Added to timeline")
           : kind === "pool"
-            ? "Added to Media Pool"
-            : "PNG saved",
+            ? t("Added to Media Pool")
+            : t("PNG saved"),
       );
     } catch (error) {
       notify(error.message);
@@ -1097,7 +1102,7 @@ function App() {
                 JSON.parse(await e.target.files[0].text()),
               );
               setLooks((list) => [...list, ...incoming]);
-              notify("Presets imported");
+              notify(t("Presets imported"));
             }
           } catch (error) {
             notify(error.message);
@@ -1119,12 +1124,12 @@ function App() {
         <div className="header-center">
           {desktop ? (
             <span className="resolve-context">
-              {projectContext?.name || "Open a Resolve project"}
+              {projectContext?.name || t("Open a Resolve project")}
             </span>
           ) : (
             <>
               <span className="status-dot" />
-              {saveStatus}
+              {t(saveStatus)}
             </>
           )}
         </div>
@@ -1132,8 +1137,8 @@ function App() {
           {desktop && (
             <button
               className={`icon-button pin-button ${alwaysOnTop ? "active" : ""}`}
-              aria-label="Always on top"
-              title="Always on top"
+              aria-label={t("Always on top")}
+              title={t("Always on top")}
               aria-pressed={alwaysOnTop}
               onClick={async () => {
                 try {
@@ -1148,8 +1153,8 @@ function App() {
           )}
           <button
             className="icon-button"
-            aria-label="Quick icon search"
-            title={`Quick icon search · ${shortcutLabel(shortcut)}`}
+            aria-label={t("Quick icon search")}
+            title={t("Quick icon search · {shortcut}", { shortcut: shortcutLabel(shortcut) })}
             onClick={() => setModal("search")}
           >
             <Search size={17} />
@@ -1157,7 +1162,7 @@ function App() {
           <button
             className="icon-button"
             aria-label={
-              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+              theme === "dark" ? t("Switch to light mode") : t("Switch to dark mode")
             }
             onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
           >
@@ -1165,17 +1170,17 @@ function App() {
           </button>
           <button
             className="quiet-button project-button"
-            aria-label="Project"
-            title="Project"
+            aria-label={t("Project")}
+            title={t("Project")}
             onClick={() => setModal("project")}
           >
             <FolderOpen size={16} />
-            <span>Project</span>
+            <span>{t("Project")}</span>
             <ChevronDown size={12} />
           </button>
           <button
             className="icon-button"
-            aria-label="Help and shortcuts"
+            aria-label={t("Help and shortcuts")}
             onClick={() => setModal("help")}
           >
             <HelpCircle size={18} />
@@ -1183,17 +1188,17 @@ function App() {
           <button
             className="quiet-button look-button"
             onClick={() => setModal("looks")}
-            aria-label="Style presets"
-            title="Saved looks"
+            aria-label={t("Style presets")}
+            title={t("Saved looks")}
           >
             <Bookmark size={16} />
-            <span>Looks</span>
+            <span>{t("Looks")}</span>
           </button>
           {desktop && (
             <button
               className="icon-button"
               onClick={() => setModal("archive")}
-              aria-label="Generated icons archive"
+              aria-label={t("Generated icons archive")}
             >
               <Archive size={17} />
             </button>
@@ -1201,7 +1206,7 @@ function App() {
           <button
             className="icon-button"
             onClick={() => setModal("settings")}
-            aria-label="Settings"
+            aria-label={t("Settings")}
           >
             <Settings size={17} />
           </button>
@@ -1209,23 +1214,23 @@ function App() {
             <a
               className="secondary-button resolve-download-button"
               href={releaseUrl}
-              title="Download Resolve script"
-              aria-label="Download Resolve script"
+              title={t("Download Resolve script")}
+              aria-label={t("Download Resolve script")}
             >
               <Film size={16} />
-              <span className="button-label">Resolve script</span>
+              <span className="button-label">{t("Resolve script")}</span>
             </a>
           )}
           <span className="divider" />
           <button
             className="primary-button"
-            aria-label="Export icons"
-            title="Export icons"
+            aria-label={t("Export icons")}
+            title={t("Export icons")}
             disabled={!active || busy}
             onClick={() => setModal("export")}
           >
             <Download size={16} />
-            <span>Export</span>
+            <span>{t("Export")}</span>
             <ChevronDown size={13} />
           </button>
         </div>
@@ -1233,7 +1238,7 @@ function App() {
       <div className={`workspace ${showLibrary ? "" : "library-hidden"}`}>
         <button
           className="panel-backdrop"
-          aria-label="Close side panels"
+          aria-label={t("Close side panels")}
           onClick={() => {
             setShowLibrary(false);
             if (window.innerWidth < 720) setShowInspector(false);
@@ -1243,11 +1248,11 @@ function App() {
           <aside className="library-panel">
             <div className="library-heading">
               <div>
-                <h2>Library</h2>
+                <h2>{t("Library")}</h2>
               </div>
               <button
                 className="icon-button"
-                aria-label="Hide library"
+                aria-label={t("Hide library")}
                 onClick={() => setShowLibrary(false)}
               >
                 <PanelLeftClose size={17} />
@@ -1257,13 +1262,13 @@ function App() {
               <Search size={16} />
               <input
                 ref={searchInput}
-                aria-label="Search icon library"
-                placeholder="Search icons…"
+                aria-label={t("Search icon library")}
+                placeholder={t("Search icons…")}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
               {query ? (
-                <button aria-label="Clear search" onClick={() => setQuery("")}>
+                <button aria-label={t("Clear search")} onClick={() => setQuery("")}>
                   <X size={13} />
                 </button>
               ) : (
@@ -1275,37 +1280,39 @@ function App() {
                 className={tabName === "library" ? "active" : ""}
                 onClick={() => setTabName("library")}
               >
-                Explore
+                {t("Explore")}
               </button>
               <button
                 className={tabName === "favorites" ? "active" : ""}
                 onClick={() => setTabName("favorites")}
               >
                 <Heart size={13} />
-                Favorites
+                {t("Favorites")}
               </button>
               <button
                 className={tabName === "imports" ? "active" : ""}
                 onClick={() => setTabName("imports")}
               >
-                Imports
+                {t("Imports")}
               </button>
             </div>
             {tabName !== "imports" ? (
               <>
                 <div className="library-filters">
                   <select
-                    aria-label="Icon collection"
+                    aria-label={t("Icon collection")}
                     value={prefix}
                     onChange={(e) => setPrefix(e.target.value)}
                   >
                     {collections.map((c) => (
                       <option key={c.id} value={c.prefix}>
-                        {c.name
-                          .replace(/[🍏🎬]/g, "")
-                          .replace(" (200k+)", "")
-                          .replace(" (350+)", "")
-                          .trim()}
+                        {t(
+                          c.name
+                            .replace(/[🍏🎬]/g, "")
+                            .replace(" (200k+)", "")
+                            .replace(" (350+)", "")
+                            .trim(),
+                        )}
                       </option>
                     ))}
                   </select>
@@ -1313,15 +1320,15 @@ function App() {
                 <div className="library-caption">
                   <span>
                     {query
-                      ? "Search results"
+                      ? t("Search results")
                       : tabName === "favorites"
-                        ? "Your favorites"
-                        : "Icons"}
+                        ? t("Your favorites")
+                        : t("Icons")}
                   </span>
                   {searchBusy ? (
                     <Loader2 size={13} className="spinning" />
                   ) : (
-                    <span>{visibleResults.length} icons</span>
+                    <span>{t("{count} icons", { count: visibleResults.length })}</span>
                   )}
                 </div>
                 <div className="icon-library">
@@ -1329,8 +1336,8 @@ function App() {
                     <div key={icon.fullName} className="library-icon-wrap">
                       <button
                         className="library-icon"
-                        title={`Add ${icon.title || icon.name}`}
-                        aria-label={`Add ${icon.title || icon.name}`}
+                        title={t("Add {name}", { name: icon.title || icon.name })}
+                        aria-label={t("Add {name}", { name: icon.title || icon.name })}
                         draggable
                         onDragStart={(e) => {
                           e.dataTransfer.setData(
@@ -1362,7 +1369,12 @@ function App() {
                       </button>
                       <button
                         className={`favorite-button ${favorites.includes(icon.fullName) ? "chosen" : ""}`}
-                        aria-label={`${favorites.includes(icon.fullName) ? "Unfavorite" : "Favorite"} ${icon.name}`}
+                        aria-label={t("{action} {name}", {
+                          action: favorites.includes(icon.fullName)
+                            ? t("Unfavorite")
+                            : t("Favorite"),
+                          name: icon.name,
+                        })}
                         onClick={() =>
                           setFavorites((f) =>
                             f.includes(icon.fullName)
@@ -1375,14 +1387,14 @@ function App() {
                       </button>
                       <div className="library-actions">
                         <button
-                          title="Copy SVG"
-                          aria-label={`Copy ${icon.name} SVG`}
+                          title={t("Copy SVG")}
+                          aria-label={t("Copy {name} SVG", { name: icon.name })}
                           onClick={async () => {
                             try {
                               await navigator.clipboard.writeText(
                                 await getIcon(icon),
                               );
-                              notify("SVG copied");
+                              notify(t("SVG copied"));
                             } catch (e) {
                               notify(e.message);
                             }
@@ -1391,8 +1403,8 @@ function App() {
                           <Copy size={10} />
                         </button>
                         <button
-                          title="Download SVG"
-                          aria-label={`Download ${icon.name} SVG`}
+                          title={t("Download SVG")}
+                          aria-label={t("Download {name} SVG", { name: icon.name })}
                           onClick={async () => {
                             try {
                               const saved = await download(
@@ -1401,7 +1413,7 @@ function App() {
                                 }),
                                 `${icon.name}.svg`,
                               );
-                              if (saved) notify("SVG downloaded");
+                              if (saved) notify(t("SVG downloaded"));
                             } catch (e) {
                               notify(e.message);
                             }
@@ -1417,8 +1429,8 @@ function App() {
                       <Search size={24} />
                       <p>
                         {tabName === "favorites"
-                          ? "Your favorites live here."
-                          : "No icons found."}
+                          ? t("Your favorites live here.")
+                          : t("No icons found.")}
                       </p>
                     </div>
                   )}
@@ -1443,12 +1455,12 @@ function App() {
                   onClick={() => fileInput.current.click()}
                 >
                   <Upload size={24} />
-                  <strong>Bring your own.</strong>
+                  <strong>{t("Bring your own.")}</strong>
                   <span>SVG, PNG, JPG, WebP, GIF or AVIF</span>
                 </button>
                 <button className="quiet-button" onClick={paste}>
                   <Clipboard size={15} />
-                  Paste image or SVG
+                  {t("Paste image or SVG")}
                 </button>
               </div>
             )}
@@ -1460,7 +1472,7 @@ function App() {
                 <Upload size={17} />
               </span>
               <span>
-                <strong>Import icons</strong>
+                <strong>{t("Import icons")}</strong>
                 <small>SVG, PNG, JPG, WebP</small>
               </span>
               <Plus size={15} />
@@ -1473,26 +1485,26 @@ function App() {
               {!showLibrary && (
                 <button
                   className="icon-button"
-                  aria-label="Show library"
+                  aria-label={t("Show library")}
                   onClick={() => setShowLibrary(true)}
                 >
                   <PanelLeftOpen size={17} />
                 </button>
               )}
-              <span>Workspace</span>
+              <span>{t("Workspace")}</span>
               <ChevronRight size={13} />
-              <strong>{active?.name || "New icon"}</strong>
+              <strong>{active?.name || t("New icon")}</strong>
               {targetIds.length > 1 && (
                 <span className="selection-badge">
-                  {targetIds.length} selected
+                  {t("{count} selected", { count: targetIds.length })}
                 </span>
               )}
             </div>
             <div className="history-controls">
               <button
                 className="icon-button inspector-toggle"
-                aria-label={showInspector ? "Hide inspector" : "Show inspector"}
-                title="Inspector"
+                aria-label={showInspector ? t("Hide inspector") : t("Show inspector")}
+                title={t("Inspector")}
                 onClick={() => setShowInspector((value) => !value)}
               >
                 {showInspector ? (
@@ -1504,8 +1516,8 @@ function App() {
               <button
                 className="icon-button"
                 disabled={!past.length}
-                aria-label="Undo"
-                title="Undo · Ctrl/⌘ Z"
+                aria-label={t("Undo")}
+                title={t("Undo · Ctrl/⌘ Z")}
                 onClick={undo}
               >
                 <Undo2 size={17} />
@@ -1513,8 +1525,8 @@ function App() {
               <button
                 className="icon-button"
                 disabled={!future.length}
-                aria-label="Redo"
-                title="Redo · Ctrl/⌘ Shift Z"
+                aria-label={t("Redo")}
+                title={t("Redo · Ctrl/⌘ Shift Z")}
                 onClick={redo}
               >
                 <Redo2 size={17} />
@@ -1522,7 +1534,7 @@ function App() {
               <span className="divider" />
               <button
                 className="icon-button"
-                aria-label="Workspace options"
+                aria-label={t("Workspace options")}
                 onClick={() => setModal("project")}
               >
                 <MoreHorizontal size={19} />
@@ -1531,7 +1543,7 @@ function App() {
           </div>
           <section
             className={`stage stage-${theme} ${stageBg === "checker" ? "stage-checker" : ""}`}
-            aria-label="Icon canvas"
+            aria-label={t("Icon canvas")}
             onWheel={(e) => {
               if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
@@ -1547,7 +1559,7 @@ function App() {
                   className={`stage-art ${desktop && nativeFile ? "native-drag-ready" : ""}`}
                   title={
                     desktop
-                      ? "Drag PNG to Resolve, Explorer or Finder"
+                      ? t("Drag PNG to Resolve, Explorer or Finder")
                       : undefined
                   }
                   draggable={!!desktop && !!nativeFile && !removing}
@@ -1570,8 +1582,8 @@ function App() {
                 <div className="stage-actions">
                   <button
                     className="quick-png"
-                    aria-label="Download PNG"
-                    title="Download PNG"
+                    aria-label={t("Download PNG")}
+                    title={t("Download PNG")}
                     disabled={!!busy}
                     onClick={async () => {
                       setBusy("png");
@@ -1581,7 +1593,7 @@ function App() {
                           return;
                         }
                         download(await renderPng(active), `${active.name}.png`);
-                        notify("PNG downloaded");
+                        notify(t("PNG downloaded"));
                       } catch (e) {
                         notify(e.message);
                       } finally {
@@ -1590,21 +1602,21 @@ function App() {
                     }}
                   >
                     <Download size={14} />
-                    <span className="button-label">Download PNG</span>
+                    <span className="button-label">{t("Download PNG")}</span>
                   </button>
                   <span />
                   <button
                     onClick={copySvg}
-                    aria-label="Copy SVG"
-                    title="Copy SVG"
+                    aria-label={t("Copy SVG")}
+                    title={t("Copy SVG")}
                   >
                     <Copy size={14} />
-                    <span className="button-label">Copy SVG</span>
+                    <span className="button-label">{t("Copy SVG")}</span>
                   </button>
                   <span />
                   <button
-                    aria-label="Copy PNG"
-                    title="Copy PNG"
+                    aria-label={t("Copy PNG")}
+                    title={t("Copy PNG")}
                     onClick={async () => {
                       try {
                         const blob = await renderPng(active);
@@ -1612,16 +1624,16 @@ function App() {
                         await navigator.clipboard.write([
                           new ClipboardItem({ "image/png": blob }),
                         ]);
-                        notify("PNG image copied");
+                        notify(t("PNG image copied"));
                       } catch {
                         notify(
-                          "Image clipboard unavailable. Export PNG instead.",
+                          t("Image clipboard unavailable. Export PNG instead."),
                         );
                       }
                     }}
                   >
                     <ImageIcon size={14} />
-                    <span className="button-label">Copy PNG</span>
+                    <span className="button-label">{t("Copy PNG")}</span>
                   </button>
                   {desktop && (
                     <>
@@ -1631,13 +1643,13 @@ function App() {
                           className="native-insert"
                           aria-label={
                             chosen.length > 1
-                              ? "Add selected icons to Media Pool"
-                              : "Add icon to Media Pool"
+                              ? t("Add selected icons to Media Pool")
+                              : t("Add icon to Media Pool")
                           }
                           title={
                             chosen.length > 1
-                              ? `Add ${chosen.length} selected icons to Media Pool`
-                              : "Add icon to Media Pool"
+                              ? t("Add {count} selected icons to Media Pool", { count: chosen.length })
+                              : t("Add icon to Media Pool")
                           }
                           disabled={!!busy || removing || !projectContext}
                           onClick={() => generateNative("pool")}
@@ -1650,13 +1662,13 @@ function App() {
                         </button>
                         <button
                           className="native-insert"
-                          aria-label="Add icon to timeline"
-                          title="Add icon to timeline"
+                          aria-label={t("Add icon to timeline")}
+                          title={t("Add icon to timeline")}
                           disabled={!!busy || removing || !projectContext}
                           onClick={() => generateNative("timeline")}
                         >
                           <ListVideo size={14} />
-                          <span className="button-label">Timeline</span>
+                          <span className="button-label">{t("Timeline")}</span>
                         </button>
                       </div>
                     </>
@@ -1667,8 +1679,8 @@ function App() {
                     {presets.slice(0, 4).map((p) => (
                       <button
                         key={p.name}
-                        title={`Apply ${p.name} palette`}
-                        aria-label={`Apply ${p.name} palette`}
+                        title={t("Apply {name} palette", { name: p.name })}
+                        aria-label={t("Apply {name} palette", { name: p.name })}
                         onClick={() =>
                           applyStyle({
                             bgType: "gradient",
@@ -1691,29 +1703,29 @@ function App() {
             ) : (
               <div className="stage-empty">
                 <Sparkles size={40} />
-                <h2>Drop icons here</h2>
+                <h2>{t("Drop icons here")}</h2>
                 <button
                   className="primary-button"
                   onClick={() => fileInput.current.click()}
                 >
                   <Upload size={16} />
-                  Import icons
+                  {t("Import icons")}
                 </button>
               </div>
             )}
             <div className="stage-bottom">
               <div className="zoom-control">
                 <button
-                  aria-label="Zoom out"
+                  aria-label={t("Zoom out")}
                   onClick={() => setZoom((z) => Math.max(0.4, z - 0.1))}
                 >
                   −
                 </button>
-                <button aria-label="Reset zoom" onClick={() => setZoom(1)}>
+                <button aria-label={t("Reset zoom")} onClick={() => setZoom(1)}>
                   {Math.round(zoom * 100)}%
                 </button>
                 <button
-                  aria-label="Zoom in"
+                  aria-label={t("Zoom in")}
                   onClick={() => setZoom((z) => Math.min(1.7, z + 0.1))}
                 >
                   +
@@ -1722,21 +1734,21 @@ function App() {
               <div className="stage-view">
                 <button
                   className={theme === "light" ? "active" : ""}
-                  aria-label="Light mode"
+                  aria-label={t("Light mode")}
                   onClick={() => setTheme("light")}
                 >
                   <Sun size={15} />
                 </button>
                 <button
                   className={theme === "dark" ? "active" : ""}
-                  aria-label="Dark mode"
+                  aria-label={t("Dark mode")}
                   onClick={() => setTheme("dark")}
                 >
                   <Moon size={15} />
                 </button>
                 <button
                   className={stageBg === "checker" ? "active" : ""}
-                  aria-label="Transparency preview"
+                  aria-label={t("Transparency preview")}
                   onClick={() =>
                     setStageBg((bg) => (bg === "checker" ? "plain" : "checker"))
                   }
@@ -1746,18 +1758,18 @@ function App() {
               </div>
             </div>
           </section>
-          <section className="collection-panel" aria-label="Icon collection">
+          <section className="collection-panel" aria-label={t("Icon collection")}>
             <div className="collection-header">
               <div>
                 <Layers size={16} />
-                <h2>Collection</h2>
+                <h2>{t("Collection")}</h2>
                 <span className="count">{items.length}</span>
               </div>
               <div>
                 <button
                   className={`quiet-button ${batch ? "accent" : ""}`}
-                  aria-label={batch ? "Done selecting" : "Select icons"}
-                  title={batch ? "Done selecting" : "Select icons"}
+                  aria-label={batch ? t("Done selecting") : t("Select icons")}
+                  title={batch ? t("Done selecting") : t("Select icons")}
                   onClick={() => {
                     setBatch(!batch);
                     if (batch) setSelected(active ? [active.id] : []);
@@ -1765,22 +1777,22 @@ function App() {
                 >
                   <CheckCheck size={15} />
                   <span className="button-label">
-                    {batch ? "Done selecting" : "Select"}
+                    {batch ? t("Done selecting") : t("Select")}
                   </span>
                 </button>
                 <button
                   className="quiet-button"
-                  aria-label="Rename selected icons"
-                  title="Rename selected icons"
+                  aria-label={t("Rename selected icons")}
+                  title={t("Rename selected icons")}
                   disabled={!targetIds.length}
                   onClick={() => setModal("rename")}
                 >
                   <Type size={14} />
-                  <span className="button-label">Rename</span>
+                  <span className="button-label">{t("Rename")}</span>
                 </button>
                 <button
                   className="icon-button"
-                  aria-label="Duplicate selected icons"
+                  aria-label={t("Duplicate selected icons")}
                   disabled={!targetIds.length}
                   onClick={duplicate}
                 >
@@ -1788,7 +1800,7 @@ function App() {
                 </button>
                 <button
                   className="icon-button"
-                  aria-label="Remove selected icons"
+                  aria-label={t("Remove selected icons")}
                   disabled={!targetIds.length}
                   onClick={removeSelected}
                 >
@@ -1798,11 +1810,11 @@ function App() {
             </div>
             {batch && (
               <div className="batch-bar">
-                <span>{targetIds.length} selected</span>
+                <span>{t("{count} selected", { count: targetIds.length })}</span>
                 <button onClick={() => setSelected(items.map((i) => i.id))}>
-                  Select all
+                  {t("Select all")}
                 </button>
-                <button onClick={() => setSelected([])}>Clear</button>
+                <button onClick={() => setSelected([])}>{t("Clear")}</button>
               </div>
             )}
             <div className="collection-strip">
@@ -1810,7 +1822,7 @@ function App() {
                 <button
                   key={item.id}
                   className={`collection-item ${selected.includes(item.id) ? "selected" : ""} ${activeId === item.id ? "current" : ""}`}
-                  aria-label={`Select ${item.name}`}
+                  aria-label={t("Select {name}", { name: item.name })}
                   aria-pressed={selected.includes(item.id)}
                   onClick={(e) => choose(item, e)}
                 >
@@ -1826,25 +1838,25 @@ function App() {
               <button
                 className="collection-add"
                 onClick={() => fileInput.current.click()}
-                aria-label="Import more icons"
+                aria-label={t("Import more icons")}
               >
                 <Plus size={23} />
-                <span className="button-label">Add icons</span>
+                <span className="button-label">{t("Add icons")}</span>
               </button>
             </div>
           </section>
         </main>
         <aside className="inspector">
           <div className="inspector-heading">
-            <h2>{targetIds.length > 1 ? "Selection" : "Inspector"}</h2>
+            <h2>{targetIds.length > 1 ? t("Selection") : t("Inspector")}</h2>
             <span>
               {targetIds.length > 1
-                ? `${targetIds.length} icons`
-                : "Live preview"}
+                ? t("{count} icons", { count: targetIds.length })
+                : t("Live preview")}
             </span>
             <button
               className="icon-button inspector-close"
-              aria-label="Close inspector"
+              aria-label={t("Close inspector")}
               onClick={() => setShowInspector(false)}
             >
               <X size={16} />
@@ -1856,14 +1868,14 @@ function App() {
               onClick={() => setPanel("appearance")}
             >
               <SlidersHorizontal size={15} />
-              Style
+              {t("Style")}
             </button>
             <button
               className={panel === "glyph" ? "active" : ""}
               onClick={() => setPanel("glyph")}
             >
               <Sparkles size={15} />
-              Glyph
+              {t("Glyph")}
             </button>
           </div>
           <div className="inspector-scroll">
@@ -1872,15 +1884,15 @@ function App() {
                 {targetIds.length > 1 && (
                   <div className="selection-info">
                     <Layers size={15} />
-                    {targetIds.length} selected
+                    {t("{count} selected", { count: targetIds.length })}
                   </div>
                 )}
                 {panel === "appearance" && (
                   <>
                     <section className="control-section">
-                      <h3>Background</h3>
+                      <h3>{t("Background")}</h3>
                       <Segment
-                        label="Background type"
+                        label={t("Background type")}
                         value={s.bgType}
                         options={["solid", "gradient", ["transparent", "None"]]}
                         onChange={(v) => change("bgType", v)}
@@ -1891,8 +1903,8 @@ function App() {
                             <Color
                               label={
                                 s.bgType === "gradient"
-                                  ? "Start color"
-                                  : "Color"
+                                  ? t("Start color")
+                                  : t("Color")
                               }
                               value={s.bgColor1}
                               mixed={mixed("bgColor1")}
@@ -1900,7 +1912,7 @@ function App() {
                             />
                             {s.bgType === "gradient" && (
                               <Color
-                                label="End color"
+                                label={t("End color")}
                                 value={s.bgColor2}
                                 mixed={mixed("bgColor2")}
                                 onChange={(v) => change("bgColor2", v)}
@@ -1908,14 +1920,14 @@ function App() {
                             )}
                           </div>
                           {s.bgType === "gradient" &&
-                            slider("bgAngle", "Gradient angle", 0, 360, 1, "°")}
+                            slider("bgAngle", t("Gradient angle"), 0, 360, 1, "°")}
                         </>
                       )}
-                      <h4>Palettes</h4>
+                      <h4>{t("Palettes")}</h4>
                       <div className="palette-grid">
                         {presets.map((p) => (
                           <button
-                            aria-label={`Use ${p.name} colors`}
+                            aria-label={t("Use {name} colors", { name: p.name })}
                             title={p.name}
                             key={p.name}
                             style={{
@@ -1935,7 +1947,7 @@ function App() {
                       </div>
                       <details className="disclosure">
                         <summary>
-                          Solid colors
+                          {t("Solid colors")}
                           <ChevronDown size={12} />
                         </summary>
                         <div className="palette-grid">
@@ -1958,7 +1970,7 @@ function App() {
                             <button
                               key={c}
                               title={c}
-                              aria-label={`Use ${c}`}
+                              aria-label={t("Use {color}", { color: c })}
                               style={{ background: c }}
                               onClick={() =>
                                 applyStyle({ bgType: "solid", bgColor1: c })
@@ -1969,63 +1981,63 @@ function App() {
                       </details>
                     </section>
                     <section className="control-section">
-                      <h3>Shape & finish</h3>
-                      {slider("borderRadius", "Corner radius", 0, 50, 0.5, "%")}
+                      <h3>{t("Shape & finish")}</h3>
+                      {slider("borderRadius", t("Corner radius"), 0, 50, 0.5, "%")}
                       <div className="mini-presets">
                         <button onClick={() => change("borderRadius", 0)}>
-                          Square
+                          {t("Square")}
                         </button>
                         <button onClick={() => change("borderRadius", 22.5)}>
-                          Squircle
+                          {t("Squircle")}
                         </button>
                         <button onClick={() => change("borderRadius", 50)}>
-                          Circle
+                          {t("Circle")}
                         </button>
                       </div>
                       {toggle(
                         "enableShadow",
-                        "Soft shadow",
-                        "A little lift from the canvas",
+                        t("Soft shadow"),
+                        t("A little lift from the canvas"),
                       )}
                       {toggle(
                         "enableInnerLight",
-                        "Light edge",
-                        "A subtle highlight around the shape",
+                        t("Light edge"),
+                        t("A subtle highlight around the shape"),
                       )}
                       <details className="disclosure">
                         <summary>
-                          More effects
+                          {t("More effects")}
                           <ChevronDown size={12} />
                         </summary>
                         {toggle(
                           "enableBevel",
-                          "Inset bevel",
-                          "Monterey-inspired depth",
+                          t("Inset bevel"),
+                          t("Monterey-inspired depth"),
                         )}
-                        {toggle("enableGlyphShadow", "Glyph shadow")}
-                        {toggle("enableGlow", "Glyph glow")}
+                        {toggle("enableGlyphShadow", t("Glyph shadow"))}
+                        {toggle("enableGlow", t("Glyph glow"))}
                         {s.enableGlow &&
-                          slider("glowStrength", "Glow radius", 5, 80, 1)}
-                        {toggle("enableOutline", "Glyph outline")}
+                          slider("glowStrength", t("Glow radius"), 5, 80, 1)}
+                        {toggle("enableOutline", t("Glyph outline"))}
                         {s.enableOutline &&
-                          slider("outlineWidth", "Outline width", 1, 30, 1)}
+                          slider("outlineWidth", t("Outline width"), 1, 30, 1)}
                         {(s.enableGlow || s.enableOutline) && (
                           <Color
-                            label="Effect color"
+                            label={t("Effect color")}
                             value={s.effectColor}
                             onChange={(v) => change("effectColor", v)}
                           />
                         )}
-                        {toggle("enableAmbientLight", "Ambient light")}
-                        {toggle("enableVignette", "Vignette")}
-                        {toggle("enableGrain", "Grain texture")}
+                        {toggle("enableAmbientLight", t("Ambient light"))}
+                        {toggle("enableVignette", t("Vignette"))}
+                        {toggle("enableGrain", t("Grain texture"))}
                         {s.enableGrain &&
-                          slider("grainAmount", "Grain amount", 1, 25, 1, "%")}
-                        {toggle("enableMonochrome", "Monochrome glyph")}
+                          slider("grainAmount", t("Grain amount"), 1, 25, 1, "%")}
+                        {toggle("enableMonochrome", t("Monochrome glyph"))}
                         {s.enableShadow &&
                           slider(
                             "shadowStrength",
-                            "Shadow opacity",
+                            t("Shadow opacity"),
                             0,
                             70,
                             1,
@@ -2033,7 +2045,7 @@ function App() {
                           )}
                         {slider(
                           "glyphOpacity",
-                          "Glyph opacity",
+                          t("Glyph opacity"),
                           10,
                           100,
                           1,
@@ -2042,8 +2054,8 @@ function App() {
 
                         {toggle(
                           "enableClassicSweep",
-                          "Classic gloss",
-                          "A curved glass reflection",
+                          t("Classic gloss"),
+                          t("A curved glass reflection"),
                         )}
                       </details>
                     </section>
@@ -2052,23 +2064,23 @@ function App() {
                 {panel === "glyph" && (
                   <>
                     <section className="control-section">
-                      <h3>Foreground</h3>
+                      <h3>{t("Foreground")}</h3>
                       <div className="two-buttons">
                         <button
                           className="secondary-button"
                           onClick={() => fileInput.current.click()}
                         >
                           <Upload size={14} />
-                          Import
+                          {t("Import")}
                         </button>
                         <button className="secondary-button" onClick={paste}>
                           <Clipboard size={14} />
-                          Paste
+                          {t("Paste")}
                         </button>
                       </div>
-                      <h4>Color treatment</h4>
+                      <h4>{t("Color treatment")}</h4>
                       <Segment
-                        label="Glyph color"
+                        label={t("Glyph color")}
                         value={s.iconColorMode}
                         options={["original", "solid", "gradient"]}
                         onChange={(v) => change("iconColorMode", v)}
@@ -2077,13 +2089,13 @@ function App() {
                         <>
                           <div className="colors">
                             <Color
-                              label="Glyph color"
+                              label={t("Glyph color")}
                               value={s.iconColor1}
                               onChange={(v) => change("iconColor1", v)}
                             />
                             {s.iconColorMode === "gradient" && (
                               <Color
-                                label="Second color"
+                                label={t("Second color")}
                                 value={s.iconColor2}
                                 onChange={(v) => change("iconColor2", v)}
                               />
@@ -2092,7 +2104,7 @@ function App() {
                           {s.iconColorMode === "gradient" &&
                             slider(
                               "iconAngle",
-                              "Glyph gradient angle",
+                              t("Glyph gradient angle"),
                               0,
                               360,
                               1,
@@ -2102,13 +2114,13 @@ function App() {
                       )}
                     </section>
                     <section className="control-section">
-                      <h3>Glyph palettes</h3>
+                      <h3>{t("Glyph palettes")}</h3>
                       <div className="palette-grid">
                         {presets.map((p) => (
                           <button
                             key={p.name}
                             title={p.name}
-                            aria-label={`Use ${p.name} glyph gradient`}
+                            aria-label={t("Use {name} glyph gradient", { name: p.name })}
                             style={{
                               background: `linear-gradient(145deg,${p.colors[0]},${p.colors[1]})`,
                             }}
@@ -2124,7 +2136,7 @@ function App() {
                       </div>
                       <details className="disclosure">
                         <summary>
-                          Solid colors
+                          {t("Solid colors")}
                           <ChevronDown size={12} />
                         </summary>
                         <div className="palette-grid">
@@ -2136,7 +2148,7 @@ function App() {
                             <button
                               key={c}
                               title={c}
-                              aria-label={`Use ${c} glyph color`}
+                              aria-label={t("Use {color} glyph color", { color: c })}
                               style={{ background: c }}
                               onClick={() =>
                                 applyStyle({
@@ -2150,9 +2162,9 @@ function App() {
                       </details>
                     </section>
                     <section className="control-section">
-                      <h3>Size & position</h3>
+                      <h3>{t("Size & position")}</h3>
                       <Slider
-                        label="Glyph size"
+                        label={t("Glyph size")}
                         value={s.iconScale * 100}
                         min={5}
                         max={150}
@@ -2160,9 +2172,9 @@ function App() {
                         mixed={mixed("iconScale")}
                         onChange={(v) => change("iconScale", v / 100)}
                       />
-                      {slider("iconRotation", "Rotation", -180, 180, 1, "°")}
-                      {slider("offsetX", "Horizontal offset", -40, 40, 1, "%")}
-                      {slider("offsetY", "Vertical offset", -40, 40, 1, "%")}
+                      {slider("iconRotation", t("Rotation"), -180, 180, 1, "°")}
+                      {slider("offsetX", t("Horizontal offset"), -40, 40, 1, "%")}
+                      {slider("offsetY", t("Vertical offset"), -40, 40, 1, "%")}
                       <button
                         className="text-button"
                         onClick={() =>
@@ -2175,49 +2187,49 @@ function App() {
                         }
                       >
                         <RotateCcw size={13} />
-                        Reset placement
+                        {t("Reset placement")}
                       </button>
                     </section>
                     <section className="control-section">
-                      <h3>Background removal</h3>
+                      <h3>{t("Background removal")}</h3>
                       {toggle(
                         "removeBg",
-                        "Remove image background",
-                        "Works best with a flat background",
+                        t("Remove image background"),
+                        t("Works best with a flat background"),
                       )}
                       {removing && (
                         <span className="processing-state">
-                          <Loader2 size={13} className="spin" /> Removing
+                          <Loader2 size={13} className="spin" /> {t("Removing")}
                           background…
                         </span>
                       )}
                       {s.removeBg && (
                         <>
                           <select
-                            aria-label="Background removal color"
+                            aria-label={t("Background removal color")}
                             value={s.bgRemoveMode}
                             onChange={(e) =>
                               change("bgRemoveMode", e.target.value)
                             }
                           >
-                            <option value="smart">Smart foreground (AI)</option>
-                            <option value="auto">Detect edge color</option>
-                            <option value="white">White background</option>
-                            <option value="black">Black background</option>
-                            <option value="custom">Choose a color</option>
+                            <option value="smart">{t("Smart foreground (AI)")}</option>
+                            <option value="auto">{t("Detect edge color")}</option>
+                            <option value="white">{t("White background")}</option>
+                            <option value="black">{t("Black background")}</option>
+                            <option value="custom">{t("Choose a color")}</option>
                           </select>
                           {s.bgRemoveMode === "custom" && (
                             <Color
-                              label="Remove color"
+                              label={t("Remove color")}
                               value={s.bgRemoveColor}
                               onChange={(v) => change("bgRemoveColor", v)}
                             />
                           )}{" "}
-                          {slider("bgTolerance", "Tolerance", 0, 180, 1)}
+                          {slider("bgTolerance", t("Tolerance"), 0, 180, 1)}
                           {toggle(
                             "edgeOnly",
-                            "Connected edges only",
-                            "Protect matching colors inside the icon",
+                            t("Connected edges only"),
+                            t("Protect matching colors inside the icon"),
                           )}
                         </>
                       )}
@@ -2230,14 +2242,14 @@ function App() {
                     onClick={() => applyStyle(defaults)}
                   >
                     <RotateCcw size={14} />
-                    Reset style
+                    {t("Reset style")}
                   </button>
                 </div>
               </>
             ) : (
               <div className="empty-inspector">
                 <Sparkles size={30} />
-                <p>Add an icon to begin.</p>
+                <p>{t("Add an icon to begin.")}</p>
               </div>
             )}
           </div>
@@ -2247,7 +2259,7 @@ function App() {
         <div className="drop-overlay">
           <div>
             <Upload size={38} />
-            <h2>Drop to import</h2>
+            <h2>{t("Drop to import")}</h2>
             <span>SVG · PNG · JPG · WebP · GIF · AVIF</span>
           </div>
         </div>
@@ -2257,7 +2269,7 @@ function App() {
           <Check size={16} />
           {toast}
           <button
-            aria-label="Dismiss notification"
+            aria-label={t("Dismiss notification")}
             onClick={() => setToast("")}
           >
             <X size={13} />
@@ -2278,7 +2290,7 @@ function App() {
             );
             setModal(null);
             notify(
-              `Renamed ${rows.length} icon${rows.length === 1 ? "" : "s"}`,
+              t(`Renamed {count} icon${rows.length === 1 ? "" : "s"}`, { count: rows.length }),
             );
           }}
         />
@@ -2293,7 +2305,7 @@ function App() {
         />
       )}
       {modal === "looks" && (
-        <Modal title="Saved looks" onClose={() => setModal(null)} wide>
+        <Modal title={t("Saved looks")} onClose={() => setModal(null)} wide>
           <LooksPanel
             looks={looks}
             style={s}
@@ -2326,7 +2338,7 @@ function App() {
         </Modal>
       )}
       {modal === "settings" && (
-        <Modal title="Settings" onClose={() => setModal(null)}>
+        <Modal title={t("Settings")} onClose={() => setModal(null)}>
           <SettingsPanel
             shortcut={shortcut}
             setShortcut={setShortcut}
@@ -2346,7 +2358,7 @@ function App() {
         </Modal>
       )}
       {modal === "search" && (
-        <Modal title="Find an icon" onClose={() => setModal(null)} wide>
+        <Modal title={t("Find an icon")} onClose={() => setModal(null)} wide>
           <QuickSearch
             shortcut={shortcut}
             onChoose={async (icon) => {
@@ -2357,7 +2369,7 @@ function App() {
         </Modal>
       )}
       {modal === "archive" && desktop && (
-        <Modal title="Generated icons" wide onClose={() => setModal(null)}>
+        <Modal title={t("Generated icons")} wide onClose={() => setModal(null)}>
           <ArchivePanel
             notify={notify}
             onRestore={(file) => {
@@ -2380,7 +2392,7 @@ function App() {
         </Modal>
       )}
       {modal === "project" && (
-        <Modal title="Project" onClose={() => setModal(null)}>
+        <Modal title={t("Project")} onClose={() => setModal(null)}>
           <div className="project-options">
             <button
               onClick={() => {
@@ -2395,7 +2407,7 @@ function App() {
               <Save />
               <span>
                 <strong>
-                  {desktop ? "Generated icons archive" : "Save project"}
+                  {desktop ? t("Generated icons archive") : t("Save project")}
                 </strong>
               </span>
               <ChevronRight size={16} />
@@ -2408,7 +2420,7 @@ function App() {
             >
               <FolderOpen />
               <span>
-                <strong>Open project</strong>
+                <strong>{t("Open project")}</strong>
               </span>
               <ChevronRight size={16} />
             </button>
@@ -2420,7 +2432,7 @@ function App() {
             >
               <Upload />
               <span>
-                <strong>Import icons</strong>
+                <strong>{t("Import icons")}</strong>
               </span>
               <ChevronRight size={16} />
             </button>
@@ -2428,7 +2440,7 @@ function App() {
               <a className="resolve-download-row" href={releaseUrl}>
                 <Download />
                 <span>
-                  <strong>Download Resolve panel</strong>
+                  <strong>{t("Download Resolve panel")}</strong>
                 </span>
                 <ChevronRight size={16} />
               </a>
@@ -2439,12 +2451,12 @@ function App() {
                 setSelected([]);
                 setActiveId(null);
                 setModal(null);
-                notify("Fresh workspace · Undo to restore your collection");
+                notify(t("Fresh workspace · Undo to restore your collection"));
               }}
             >
               <Plus />
               <span>
-                <strong>New workspace</strong>
+                <strong>{t("New workspace")}</strong>
               </span>
               <ChevronRight size={16} />
             </button>
@@ -2452,19 +2464,19 @@ function App() {
         </Modal>
       )}
       {modal === "help" && (
-        <Modal title="Keyboard shortcuts" onClose={() => setModal(null)}>
+        <Modal title={t("Keyboard shortcuts")} onClose={() => setModal(null)}>
           <div className="help-content">
             {[
-              ["Quick icon search", shortcutLabel(shortcut)],
-              ["Search library", "/ or Ctrl/⌘ K"],
-              ["Select all", "Ctrl/⌘ A"],
-              ["Undo / redo", "Ctrl/⌘ Z / Shift Z"],
-              ["Duplicate selection", "Ctrl/⌘ D"],
-              ["Save project", "Ctrl/⌘ S"],
-              ["Rename selection", "F2"],
-              ["Paste image or SVG", "Ctrl/⌘ V"],
-              ["Remove selection", "Delete"],
-              ["Select a range", "Shift click"],
+              [t("Quick icon search"), shortcutLabel(shortcut)],
+              [t("Search library"), t("/ or Ctrl/⌘ K")],
+              [t("Select all"), "Ctrl/⌘ A"],
+              [t("Undo / redo"), "Ctrl/⌘ Z / Shift Z"],
+              [t("Duplicate selection"), "Ctrl/⌘ D"],
+              [t("Save project"), "Ctrl/⌘ S"],
+              [t("Rename selection"), "F2"],
+              [t("Paste image or SVG"), "Ctrl/⌘ V"],
+              [t("Remove selection"), "Delete"],
+              [t("Select a range"), "Shift click"],
             ].map(([a, b]) => (
               <div key={a}>
                 <span>{a}</span>
@@ -2497,11 +2509,11 @@ function RenameModal({ items, selected, onApply, onClose }) {
   try {
     rows = renamePreview(items, selected, rule);
   } catch {
-    error = "Check your regular expression.";
+    error = t("Check your regular expression.");
   }
   return (
     <Modal
-      title={selected.length === 1 ? "Rename icon" : "Rename icons"}
+      title={selected.length === 1 ? t("Rename icon") : t("Rename icons")}
       wide
       onClose={onClose}
     >
@@ -2509,31 +2521,31 @@ function RenameModal({ items, selected, onApply, onClose }) {
         <div className="rename-controls">
           <label className="form-field">
             <span>
-              {selected.length === 1 ? "Name or pattern" : "Name pattern"}
+              {selected.length === 1 ? t("Name or pattern") : t("Name pattern")}
             </span>
             <input
-              aria-label="Name pattern"
+              aria-label={t("Name pattern")}
               value={rule.template}
               onChange={(e) => update("template", e.target.value)}
             />
             <small>
-              Use {"{name}"}, {"{original}"}, {"{n}"}, or {"{date}"}.
+              {t("Use {name}, {original}, {n}, or {date}.")}
             </small>
           </label>
           <div className="form-row">
             <label className="form-field">
-              <span>Prefix</span>
+              <span>{t("Prefix")}</span>
               <input
-                aria-label="Name prefix"
+                aria-label={t("Name prefix")}
                 placeholder="app-"
                 value={rule.prefix}
                 onChange={(e) => update("prefix", e.target.value)}
               />
             </label>
             <label className="form-field">
-              <span>Suffix</span>
+              <span>{t("Suffix")}</span>
               <input
-                aria-label="Name suffix"
+                aria-label={t("Name suffix")}
                 placeholder="-dark"
                 value={rule.suffix}
                 onChange={(e) => update("suffix", e.target.value)}
@@ -2541,9 +2553,9 @@ function RenameModal({ items, selected, onApply, onClose }) {
             </label>
           </div>
           <label className="form-field">
-            <span>Letter case</span>
+            <span>{t("Letter case")}</span>
             <select
-              aria-label="Letter case"
+              aria-label={t("Letter case")}
               value={rule.case}
               onChange={(e) => update("case", e.target.value)}
             >
@@ -2564,9 +2576,9 @@ function RenameModal({ items, selected, onApply, onClose }) {
           </label>
           <div className="form-row">
             <label className="form-field">
-              <span>Start number</span>
+              <span>{t("Start number")}</span>
               <input
-                aria-label="Start number"
+                aria-label={t("Start number")}
                 type="number"
                 min="1"
                 value={rule.start}
@@ -2574,9 +2586,9 @@ function RenameModal({ items, selected, onApply, onClose }) {
               />
             </label>
             <label className="form-field">
-              <span>Number padding</span>
+              <span>{t("Number padding")}</span>
               <select
-                aria-label="Number padding"
+                aria-label={t("Number padding")}
                 value={rule.padding}
                 onChange={(e) => update("padding", e.target.value)}
               >
@@ -2589,35 +2601,35 @@ function RenameModal({ items, selected, onApply, onClose }) {
           </div>
           <details className="disclosure">
             <summary>
-              Find & replace
+              {t("Find & replace")}
               <ChevronDown size={13} />
             </summary>
             <div className="form-row">
               <label className="form-field">
-                <span>Find</span>
+                <span>{t("Find")}</span>
                 <input
-                  aria-label="Find in name"
+                  aria-label={t("Find in name")}
                   value={rule.find}
                   onChange={(e) => update("find", e.target.value)}
                 />
               </label>
               <label className="form-field">
-                <span>Replace with</span>
+                <span>{t("Replace with")}</span>
                 <input
-                  aria-label="Replace with"
+                  aria-label={t("Replace with")}
                   value={rule.replace}
                   onChange={(e) => update("replace", e.target.value)}
                 />
               </label>
             </div>
             <Toggle
-              label="Regular expression"
+              label={t("Regular expression")}
               checked={rule.regex}
               onChange={(v) => update("regex", v)}
             />
             {rule.regex && (
               <Toggle
-                label="Case sensitive"
+                label={t("Case sensitive")}
                 checked={rule.caseSensitive}
                 onChange={(v) => update("caseSensitive", v)}
               />
@@ -2626,8 +2638,8 @@ function RenameModal({ items, selected, onApply, onClose }) {
         </div>
         <div className="rename-preview">
           <div className="preview-label">
-            <span>BEFORE</span>
-            <span>AFTER</span>
+            <span>{t("BEFORE")}</span>
+            <span>{t("AFTER")}</span>
           </div>
           {error ? (
             <p className="error">{error}</p>
@@ -2644,14 +2656,14 @@ function RenameModal({ items, selected, onApply, onClose }) {
       </div>
       <footer className="modal-footer">
         <button className="secondary-button" onClick={onClose}>
-          Cancel
+          {t("Cancel")}
         </button>
         <button
           className="primary-button"
           disabled={!!error || !rows.length || !rule.template.trim()}
           onClick={() => onApply(rows)}
         >
-          Apply names
+          {t("Apply names")}
           <Check size={15} />
         </button>
       </footer>
@@ -2673,7 +2685,7 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
     setBusy("export");
     try {
       const projectId = desktop ? (await desktop.context()).project?.id : null;
-      if (desktop && !projectId) throw Error("Open a Resolve project first.");
+      if (desktop && !projectId) throw Error(t("Open a Resolve project first."));
       const files = {},
         sizes =
           format === "iconset"
@@ -2717,7 +2729,7 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
       if (format === "iconset")
         for (const item of targets)
           files[`${item.name}/README.txt`] = strToU8(
-            "PNG icon sizes: 16–1024 px. SVG is available as a separate export.\n",
+            t("PNG icon sizes: 16–1024 px. SVG is available as a separate export.\n"),
           );
       let saved;
       if (targets.length === 1 && format !== "iconset") {
@@ -2736,7 +2748,10 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
             : "icon-studio-collection.zip",
         );
       notify(
-        `${saved ? "Exported" : "Generated"} ${targets.length} icon${targets.length === 1 ? "" : "s"}`,
+        t(
+          `${saved ? "Exported" : "Generated"} {count} ${targets.length === 1 ? "icon" : "icons"}`,
+          { count: targets.length },
+        ),
       );
       onClose();
     } catch (e) {
@@ -2747,24 +2762,28 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
     }
   };
   return (
-    <Modal title="Export icons" onClose={() => !working && onClose()}>
+    <Modal title={t("Export icons")} onClose={() => !working && onClose()}>
       <div className="export-options">
         <label className="form-field">
-          <span>Export</span>
+          <span>{t("Export")}</span>
           <select
-            aria-label="Export scope"
+            aria-label={t("Export scope")}
             value={scope}
             onChange={(e) => setScope(e.target.value)}
           >
-            <option value="selected">Selected icons ({selected.length})</option>
-            <option value="all">Entire collection ({items.length})</option>
+            <option value="selected">
+              {t("Selected icons ({count})", { count: selected.length })}
+            </option>
+            <option value="all">
+              {t("Entire collection ({count})", { count: items.length })}
+            </option>
           </select>
         </label>
         <div className="format-cards">
           {[
-            ["png", "PNG", "Crisp, transparent images"],
-            ["svg", "SVG", "Editable, scalable vectors"],
-            ["iconset", "Icon set", "Seven PNG sizes in a ZIP"],
+            ["png", "PNG", t("Crisp, transparent images")],
+            ["svg", "SVG", t("Editable, scalable vectors")],
+            ["iconset", t("Icon set"), t("Seven PNG sizes in a ZIP")],
           ].map(([k, label, description]) => (
             <button
               key={k}
@@ -2780,23 +2799,23 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
         </div>
         {format !== "iconset" && (
           <label className="form-field">
-            <span>Resolution</span>
+            <span>{t("Resolution")}</span>
             <select
-              aria-label="Export resolution"
+              aria-label={t("Export resolution")}
               value={size}
               onChange={(e) => setSize(e.target.value)}
             >
               {[16, 32, 64, 128, 256, 512, 1024, 2048].map((n) => (
                 <option key={n} value={n}>
                   {n} × {n}
-                  {n === 1024 ? " · Recommended" : ""}
+                  {n === 1024 ? t(" · Recommended") : ""}
                 </option>
               ))}
             </select>
           </label>
         )}
         <Toggle
-          label="Glyph only"
+          label={t("Glyph only")}
           checked={glyphOnly}
           onChange={setGlyphOnly}
         />
@@ -2807,7 +2826,7 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
           disabled={working}
           onClick={onClose}
         >
-          Cancel
+          {t("Cancel")}
         </button>
         <button
           className="primary-button"
@@ -2822,7 +2841,9 @@ function ExportModal({ items, selected, onClose, notify, setBusy }) {
           ) : (
             <>
               <Download size={15} />
-              Export {targets.length > 1 ? `${targets.length} icons` : "icon"}
+              {targets.length > 1
+                ? t("{count} icons", { count: targets.length })
+                : t("icon")}
             </>
           )}
         </button>

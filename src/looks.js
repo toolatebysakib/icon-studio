@@ -1,4 +1,5 @@
 import { defaults, safeName } from "./model.js";
+import { t } from "./i18n.js";
 
 const cacheKey = "icon-studio-looks-v1";
 export function cleanStyle(value) {
@@ -49,10 +50,10 @@ export function parseLooks(value) {
     !Array.isArray(value.looks) ||
     value.looks.length > 200
   )
-    throw new Error("Choose an Icon Studio preset file.");
+    throw new Error(t("Choose an Icon Studio preset file."));
   return value.looks.map((v) => ({
     id: crypto.randomUUID(),
-    name: safeName(v.name || "Untitled look"),
+    name: safeName(v.name || t("Untitled look")),
     style: cleanStyle(v.style),
   }));
 }

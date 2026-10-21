@@ -1,3 +1,5 @@
+import { t } from "./i18n.js";
+
 export const defaults = {
   bgType: "gradient",
   bgColor1: "#a897f5",
@@ -168,7 +170,7 @@ export function validateProject(value) {
     !Array.isArray(value.items) ||
     value.items.length > 200
   )
-    throw new Error("Choose an Icon Studio project with up to 200 icons.");
+    throw new Error(t("Choose an Icon Studio project with up to 200 icons."));
   const ids = new Set();
   return value.items.map((item) => {
     if (
@@ -178,12 +180,12 @@ export function validateProject(value) {
       typeof item.image !== "string" ||
       (!item.svg && !item.image)
     )
-      throw new Error("This project contains an invalid icon.");
+      throw new Error(t("This project contains an invalid icon."));
     if (
       item.image &&
       !/^data:image\/(png|jpeg|webp|gif|avif);base64,/i.test(item.image)
     )
-      throw new Error("Project images must be embedded image files.");
+      throw new Error(t("Project images must be embedded image files."));
     const id =
       typeof item.id === "string" && !ids.has(item.id)
         ? item.id

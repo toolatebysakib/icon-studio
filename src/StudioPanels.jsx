@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
+import { t, getLang, setLang, onLangChange } from "./i18n.js";
 import {
   Download,
   FolderOpen,
@@ -42,14 +43,14 @@ export function LooksPanel({
         }}
       >
         <input
-          aria-label="Preset name"
-          placeholder="Name this look"
+          aria-label={t("Preset name")}
+          placeholder={t("Name this look")}
           value={name}
           maxLength={80}
           onChange={(e) => setName(e.target.value)}
         />
         <button className="primary-button" disabled={!name.trim()}>
-          <Save size={15} /> Save look
+          <Save size={15} /> {t("Save look")}
         </button>
       </form>
       <div className="looks-grid">
@@ -58,7 +59,7 @@ export function LooksPanel({
             <button
               className="look-apply"
               onClick={() => onApply(look)}
-              aria-label={`Apply ${look.name} look`}
+              aria-label={t("Apply {name} look", { name: look.name })}
             >
               <span
                 dangerouslySetInnerHTML={{
@@ -78,7 +79,7 @@ export function LooksPanel({
             </button>
             <button
               className="icon-button"
-              aria-label={`Delete ${look.name} preset`}
+              aria-label={t("Delete {name} preset", { name: look.name })}
               onClick={() => onDelete(look.id)}
             >
               <Trash2 size={13} />
@@ -86,17 +87,17 @@ export function LooksPanel({
           </article>
         ))}
       </div>
-      {!looks.length && <div className="empty-state">No saved looks</div>}
+      {!looks.length && <div className="empty-state">{t("No saved looks")}</div>}
       <div className="settings-inline">
         <button className="secondary-button" onClick={onImport}>
-          <FolderOpen size={14} /> Import presets
+          <FolderOpen size={14} /> {t("Import presets")}
         </button>
         <button
           className="secondary-button"
           onClick={onExport}
           disabled={!looks.length}
         >
-          <Download size={14} /> Export presets
+          <Download size={14} /> {t("Export presets")}
         </button>
       </div>
     </div>
@@ -112,6 +113,7 @@ export function SettingsPanel({
   setShortcut,
 }) {
   const [recording, setRecording] = useState(false);
+  const lang = useSyncExternalStore(onLangChange, getLang);
   useEffect(() => {
     if (!recording) return;
     const capture = (event) => {
@@ -156,7 +158,7 @@ export function SettingsPanel({
   return (
     <div className="settings-content">
       <section className="settings-section">
-        <h3>Appearance</h3>
+        <h3>{t("Appearance")}</h3>
         <div className="theme-choices">
           {["light", "dark"].map((value) => (
             <button
@@ -164,18 +166,33 @@ export function SettingsPanel({
               key={value}
               onClick={() => setTheme(value)}
             >
-              {value === "light" ? "Light" : "Dark"}
+              {value === "light" ? t("Light") : t("Dark")}
               {theme === value && <Check size={14} />}
             </button>
           ))}
         </div>
       </section>
       <section className="settings-section">
-        <h3>Quick search</h3>
+        <h3>{t("Language")}</h3>
+        <div className="theme-choices">
+          {[["en", "English"], ["zh-CN", "简体中文"]].map(([value, label]) => (
+            <button
+              className={`secondary-button ${lang === value ? "selected" : ""}`}
+              key={value}
+              onClick={() => setLang(value)}
+            >
+              {label}
+              {lang === value && <Check size={14} />}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="settings-section">
+        <h3>{t("Quick search")}</h3>
         <label className="folder-setting">
-          <span>Shortcut preset</span>
+          <span>{t("Shortcut preset")}</span>
           <select
-            aria-label="Quick search shortcut preset"
+            aria-label={t("Quick search shortcut preset")}
             value={shortcutPresets.find((preset) => shortcutLabel(preset.shortcut) === shortcutLabel(shortcut))?.id || "custom"}
             onChange={(event) => {
               const preset = shortcutPresets.find((value) => value.id === event.target.value);
@@ -185,18 +202,18 @@ export function SettingsPanel({
               }
             }}
           >
-            {shortcutPresets.map((preset, index) => <option key={preset.id} value={preset.id}>{preset.label}{index === 0 ? " (default)" : ""}</option>)}
-            <option value="custom" disabled>Custom</option>
+            {shortcutPresets.map((preset, index) => <option key={preset.id} value={preset.id}>{preset.label}{index === 0 ? t(" (default)") : ""}</option>)}
+            <option value="custom" disabled>{t("Custom")}</option>
           </select>
         </label>
         <div className="settings-inline">
           <button
             className="secondary-button shortcut-capture"
-            aria-label="Change quick search shortcut"
+            aria-label={t("Change quick search shortcut")}
             aria-pressed={recording}
             onClick={() => setRecording((value) => !value)}
           >
-            {recording ? "Press a shortcut…" : shortcutLabel(shortcut)}
+            {recording ? t("Press a shortcut…") : shortcutLabel(shortcut)}
           </button>
           <button
             className="text-button"
@@ -205,52 +222,52 @@ export function SettingsPanel({
               setRecording(false);
             }}
           >
-            Reset
+            {t("Reset")}
           </button>
         </div>
       </section>
       {desktop && (
         <>
           <section className="settings-section">
-            <h3>Folders</h3>
+            <h3>{t("Folders")}</h3>
             {[
-              ["rawFolder", "Raw icon library"],
-              ["outputFolder", "Generated icons"],
+              ["rawFolder", t("Raw icon library")],
+              ["outputFolder", t("Generated icons")],
             ].map(([key, label]) => (
               <label className="folder-setting" key={key}>
                 <span>{label}</span>
                 <div>
                   <input
-                    aria-label={label + " folder"}
+                    aria-label={label + t(" folder")}
                     readOnly
                     value={settings?.[key] || ""}
-                    placeholder="Choose a folder"
+                    placeholder={t("Choose a folder")}
                   />
                   <button
                     className="secondary-button"
                     onClick={() => choose(key)}
                   >
-                    <FolderOpen size={15} /> Choose
+                    <FolderOpen size={15} /> {t("Choose")}
                   </button>
                 </div>
               </label>
             ))}
           </section>
           <section className="settings-section">
-            <h3>Timeline</h3>
+            <h3>{t("Timeline")}</h3>
             <label className="form-field">
-              <span>Placement</span>
-              <select aria-label="Timeline placement" value={settings?.trackMode || "auto"} onChange={(event) => update("trackMode", event.target.value)}>
-                <option value="auto">Automatic · above overlapping clips</option>
-                <option value="manual">Manual track and position</option>
+              <span>{t("Placement")}</span>
+              <select aria-label={t("Timeline placement")} value={settings?.trackMode || "auto"} onChange={(event) => update("trackMode", event.target.value)}>
+                <option value="auto">{t("Automatic · above overlapping clips")}</option>
+                <option value="manual">{t("Manual track and position")}</option>
               </select>
             </label>
             {(settings?.trackMode || "auto") === "manual" && <>
             <label className="form-field">
-              <span>Target video track</span>
+              <span>{t("Target video track")}</span>
               <input
                 type="number"
-                aria-label="Target video track"
+                aria-label={t("Target video track")}
                 min="1"
                 max="99"
                 value={settings?.track ?? 2}
@@ -258,14 +275,14 @@ export function SettingsPanel({
               />
             </label>
             <label className="form-field">
-              <span>Position</span>
+              <span>{t("Position")}</span>
               <select
-                aria-label="Timeline position"
+                aria-label={t("Timeline position")}
                 value={settings?.position || "playhead"}
                 onChange={(e) => update("position", e.target.value)}
               >
-                <option value="playhead">At playhead</option>
-                <option value="end">At timeline end</option>
+                <option value="playhead">{t("At playhead")}</option>
+                <option value="end">{t("At timeline end")}</option>
               </select>
             </label>
             </>}
@@ -273,18 +290,18 @@ export function SettingsPanel({
         </>
       )}
       <section className="settings-section">
-        <h3>Offline icon library</h3>
+        <h3>{t("Offline icon library")}</h3>
         <div className="settings-inline">
           {desktop ? (
             <button
               className="secondary-button"
               disabled={!!pending || !settings?.rawFolder}
               onClick={async () => {
-                setPending("Downloading…");
+                setPending(t("Downloading…"));
                 try {
                   const result = await desktop.downloadLibrary();
                   setSettings(await desktop.settings());
-                  notify(`${result.count.toLocaleString()} icons installed`);
+                  notify(t("{count} icons installed", { count: result.count.toLocaleString() }));
                   onLibraryReady();
                 } catch (e) {
                   notify(e.message);
@@ -294,17 +311,17 @@ export function SettingsPanel({
               }}
             >
               <Download size={15} />
-              {pending || "Download icon library"}
+              {pending || t("Download icon library")}
             </button>
           ) : (
             <a className="secondary-button" href={libraryUrl}>
-              <Download size={15} /> Download icon library
+              <Download size={15} /> {t("Download icon library")}
             </a>
           )}
         </div>
         {desktop && settings?.libraryCount > 0 && (
           <span className="setting-value">
-            {settings.libraryCount.toLocaleString()} icons installed
+            {t("{count} icons installed", { count: settings.libraryCount.toLocaleString() })}
           </span>
         )}
       </section>
@@ -312,7 +329,7 @@ export function SettingsPanel({
         <section className="settings-section">
           <h3>DaVinci Resolve</h3>
           <a className="primary-button" href={releaseUrl}>
-            <Download size={15} /> Download Resolve panel
+            <Download size={15} /> {t("Download Resolve panel")}
           </a>
         </section>
       )}
@@ -350,7 +367,13 @@ export function ArchivePanel({ notify, onRestore }) {
     setPending(true);
     try {
       const insertion = await desktop.archiveAction(kind, file.id);
-      notify(kind === "pool" ? "Added to Media Pool" : `Added to timeline${insertion?.trackIndex ? ` · V${insertion.trackIndex}` : ""}`);
+      notify(
+        kind === "pool"
+          ? t("Added to Media Pool")
+          : insertion?.trackIndex
+            ? t("Added to timeline · V{track}", { track: insertion.trackIndex })
+            : t("Added to timeline"),
+      );
     } catch (e) {
       notify(e.message);
     } finally {
@@ -361,12 +384,12 @@ export function ArchivePanel({ notify, onRestore }) {
     <div className="settings-content archive-content">
       <div className="settings-inline">
         <select
-          aria-label="Archive project"
+          aria-label={t("Archive project")}
           disabled={pending}
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
         >
-          <option value="">All projects</option>
+          <option value="">{t("All projects")}</option>
           {data.projects.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
@@ -380,7 +403,7 @@ export function ArchivePanel({ notify, onRestore }) {
             setPending(true);
             try {
               if (await desktop.exportArchive(projectId))
-                notify("Archive saved");
+                notify(t("Archive saved"));
             } catch (e) {
               notify(e.message);
             } finally {
@@ -388,7 +411,7 @@ export function ArchivePanel({ notify, onRestore }) {
             }
           }}
         >
-          <Download size={14} /> Archive ZIP
+          <Download size={14} /> {t("Archive ZIP")}
         </button>
       </div>
       <div className="archive-grid">
@@ -418,10 +441,10 @@ export function ArchivePanel({ notify, onRestore }) {
                 className="text-button"
                 onClick={() => desktop.reveal(file.id)}
               >
-                Show file
+                {t("Show file")}
               </button>
               <button className="text-button" onClick={() => onRestore(file)}>
-                Edit
+                {t("Edit")}
               </button>
             </div>
             <div>
@@ -429,28 +452,28 @@ export function ArchivePanel({ notify, onRestore }) {
                 className="secondary-button"
                 disabled={pending || file.hasPng === false}
                 onClick={() => act("pool", file)}
-                aria-label={`Add ${file.name} to Media Pool`}
-                title="Add to Media Pool"
+                aria-label={t("Add {name} to Media Pool", { name: file.name })}
+                title={t("Add to Media Pool")}
               >
                 <Film size={14} />
-                <span className="button-label">Media Pool</span>
+                <span className="button-label">{t("Media Pool")}</span>
               </button>
               <button
                 className="secondary-button"
                 disabled={pending || file.hasPng === false}
                 onClick={() => act("timeline", file)}
-                aria-label={`Add ${file.name} to timeline`}
-                title="Add to timeline"
+                aria-label={t("Add {name} to timeline", { name: file.name })}
+                title={t("Add to timeline")}
               >
                 <ListVideo size={14} />
-                <span className="button-label">Timeline</span>
+                <span className="button-label">{t("Timeline")}</span>
               </button>
             </div>
           </article>
         ))}
       </div>
       {!data.files.length && (
-        <div className="empty-state">No generated files in this project</div>
+        <div className="empty-state">{t("No generated files in this project")}</div>
       )}
       {data.total > data.files.length && (
         <button
@@ -474,7 +497,7 @@ export function ArchivePanel({ notify, onRestore }) {
             }
           }}
         >
-          Load more
+          {t("Load more")}
         </button>
       )}
     </div>

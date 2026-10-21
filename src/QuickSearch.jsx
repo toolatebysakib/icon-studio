@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { t } from "./i18n.js";
 import { Search, Loader2 } from "lucide-react";
 import { searchIcons, getIcon, dataSvg } from "./engine";
 import { shortcutLabel } from "./shortcuts";
@@ -17,7 +18,7 @@ function SearchResult({ icon, selected, onChoose, onHover, disabled }) {
   return (
     <button
       className={`quick-search-result ${selected ? "selected" : ""}`}
-      aria-label={`Insert ${icon.title || icon.name}`}
+      aria-label={t("Insert {name}", { name: icon.title || icon.name })}
       aria-pressed={selected}
       disabled={disabled}
       onClick={onChoose}
@@ -102,8 +103,8 @@ export default function QuickSearch({ onChoose, shortcut }) {
         <Search size={19} />
         <input
           autoFocus
-          aria-label="Quick icon search"
-          placeholder="Search icons…"
+          aria-label={t("Quick icon search")}
+          placeholder={t("Search icons…")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -126,11 +127,11 @@ export default function QuickSearch({ onChoose, shortcut }) {
         ))}
       </div>
       {!busy && !results.length && (
-        <div className="empty-state">No matching icons</div>
+        <div className="empty-state">{t("No matching icons")}</div>
       )}
       <footer>
-        <span>{results.length} results</span>
-        <span>↑↓ Select · Enter Add · Esc Close</span>
+        <span>{t("{count} results", { count: results.length })}</span>
+        <span>{t("↑↓ Select · Enter Add · Esc Close")}</span>
       </footer>
     </div>
   );

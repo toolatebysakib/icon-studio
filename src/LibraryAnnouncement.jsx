@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { t } from './i18n.js';
 import { Sparkles, Download, X, Loader2 } from 'lucide-react';
 import campaign from './library-announcement.json';
 
@@ -25,27 +26,27 @@ export default function LibraryAnnouncement({ desktop, notify, onReady }) {
     try {
       let settings = await desktop.settings();
       if (!settings.rawFolder) {
-        setStatus('Choose a folder…');
+        setStatus(t('Choose a folder…'));
         settings = await desktop.chooseFolder('rawFolder');
         if (!settings.rawFolder) { setStatus(''); return; }
       }
-      setStatus('Downloading library…');
+      setStatus(t('Downloading library…'));
       const result = await desktop.downloadLibrary();
-      notify(`${result.count.toLocaleString()} icons installed`);
+      notify(t("{count} icons installed", { count: result.count.toLocaleString() }));
       onReady?.();
       close();
-    } catch (error) { notify(error.message || 'Download failed. Try again in Settings.'); }
+    } catch (error) { notify(error.message || t('Download failed. Try again in Settings.')); }
     finally { setStatus(''); }
   };
   if (!visible) return null;
-  return <aside className="library-announcement" aria-label="Expanded icon library">
-    <button className="announcement-dismiss" title="Dismiss" aria-label="Dismiss library announcement" onClick={close}><X size={15}/></button>
+  return <aside className="library-announcement" aria-label={t("Expanded icon library")}>
+    <button className="announcement-dismiss" title={t("Dismiss")} aria-label={t("Dismiss library announcement")} onClick={close}><X size={15}/></button>
     <div className="announcement-mark"><Sparkles size={19}/></div>
-    <div className="announcement-copy"><span className="announcement-eyebrow">LIBRARY UPDATE</span>
-      <strong>382,000+ icons. More possibilities.</strong>
-      <p>Color, detail, and everyday essentials.</p>
+    <div className="announcement-copy"><span className="announcement-eyebrow">{t("LIBRARY UPDATE")}</span>
+      <strong>{t("382,000+ icons. More possibilities.")}</strong>
+      <p>{t("Color, detail, and everyday essentials.")}</p>
       {desktop && <button className="announcement-download" disabled={!!status} onClick={downloadLibrary}>
-        {status ? <Loader2 size={14} className="spinning"/> : <Download size={14}/>}{status || 'Download library · 101 MB'}
+        {status ? <Loader2 size={14} className="spinning"/> : <Download size={14}/>}{status || t('Download library · 101 MB')}
       </button>}
     </div>
   </aside>;
